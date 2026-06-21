@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#090A12" />
-  <title>名古屋北陸旅行 App</title>
+  <title>優旅程 - Premium Trip</title>
   <style>
     :root {
       --safe-top: env(safe-area-inset-top, 0px);
@@ -50,6 +50,9 @@
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    [hidden] { display: none !important; }
+    .sheet.mode-event #dayForm { display: none !important; }
+    .sheet.mode-day #eventForm { display: none !important; }
     html, body { height: 100%; }
     body {
       margin: 0;
@@ -115,8 +118,42 @@
       text-overflow: ellipsis;
     }
     .app-title p { margin: 5px 0 0; color: var(--muted); font-size: 12px; font-weight: 650; }
+    .trip-name-line {
+      color: rgba(255,255,255,.82) !important;
+      font-weight: 850 !important;
+      max-width: 430px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .trip-name-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      max-width: 100%;
+      margin-bottom: 14px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: rgba(255,255,255,.88);
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.12);
+      font-size: 12px;
+      font-weight: 900;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .trip-name-pill .share-mini {
+      color: #d7ffe3;
+      background: rgba(48,209,88,.16);
+      border: 1px solid rgba(48,209,88,.22);
+      border-radius: 999px;
+      padding: 3px 7px;
+      font-size: 10px;
+      letter-spacing: .2px;
+    }
 
-    .toolbar { display: flex; gap: 8px; align-items: center; }
+    .toolbar { display: flex; gap: 8px; align-items: center; justify-self: end; }
     .pill-btn {
       color: var(--text);
       background: rgba(255,255,255,.12);
@@ -236,8 +273,37 @@
       font-size: 12px;
       font-weight: 760;
     }
-    .hero-actions { display: none; margin-top: 16px; gap: 8px; }
-    body.editing .hero-actions { display: flex; flex-wrap: wrap; }
+    button.stat { cursor: pointer; }
+    button.stat:active { transform: scale(.97); }
+    button.stat.active {
+      color: white;
+      border-color: transparent;
+      background: linear-gradient(135deg, rgba(255,55,95,.92), rgba(124,92,255,.92));
+      box-shadow: 0 12px 26px rgba(124,92,255,.22);
+    }
+    .filter-banner {
+      margin: 14px 0 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 11px;
+      color: rgba(255,255,255,.86);
+      background: rgba(255,159,10,.14);
+      border: 1px solid rgba(255,159,10,.24);
+      font-size: 12px;
+      font-weight: 850;
+    }
+    .filter-clear {
+      color: white;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; margin-top: 16px; gap: 8px; }
 
     .timeline {
       position: relative;
@@ -278,6 +344,67 @@
     body.editing .event-card:active { transform: scale(.995); }
 
     .card-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    .card-top-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      min-width: 0;
+      max-width: 56%;
+      flex: 0 1 56%;
+    }
+    .icon-edit-btn {
+      flex: 0 0 auto;
+      width: 36px;
+      height: 36px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, rgba(255,55,95,.92), rgba(124,92,255,.92));
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 10px 24px rgba(124,92,255,.22), inset 0 1px rgba(255,255,255,.18);
+      font-size: 17px;
+      line-height: 1;
+    }
+    .icon-edit-btn:active { transform: scale(.96); }
+
+    .icon-star-btn {
+      flex: 0 0 auto;
+      width: 36px;
+      height: 36px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,.76);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: inset 0 1px rgba(255,255,255,.12);
+      font-size: 17px;
+      line-height: 1;
+    }
+    .icon-star-btn.active {
+      color: #3a2500;
+      background: linear-gradient(135deg, #ffe17a, #ffb300);
+      border-color: rgba(255,222,89,.82);
+      box-shadow: 0 12px 28px rgba(255,179,0,.28), inset 0 1px rgba(255,255,255,.55);
+    }
+    .icon-star-btn:active { transform: scale(.96); }
+    .event-card.is-starred {
+      background:
+        linear-gradient(180deg, rgba(255,210,72,.30), rgba(255,179,0,.16)),
+        linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.08));
+      border-color: rgba(255,211,77,.68);
+      box-shadow: 0 20px 58px rgba(255,179,0,.18), 0 14px 44px rgba(0,0,0,.24);
+    }
+    .event-card.is-starred::before {
+      background: #ffd43b;
+      box-shadow: 0 0 0 7px rgba(255,212,59,.18), 0 0 24px rgba(255,193,7,.60);
+    }
+    .event-card.is-starred .event-title::before {
+      content: "⭐ ";
+      filter: drop-shadow(0 2px 6px rgba(255,193,7,.35));
+    }
     .time {
       display: inline-flex; align-items: center; gap: 6px;
       color: #ffd1dc;
@@ -288,7 +415,8 @@
     .tag {
       flex: 0 0 auto;
       display: inline-flex; align-items: center; gap: 5px;
-      max-width: 44%;
+      max-width: 100%;
+      min-width: 0;
       color: rgba(255,255,255,.78);
       background: rgba(255,255,255,.10);
       border: 1px solid rgba(255,255,255,.12);
@@ -361,6 +489,101 @@
     .mini-btn.danger { color: #ffd3d3; background: rgba(255,59,48,.13); }
     .mini-btn.good { color: #d7ffe3; background: rgba(48,209,88,.14); }
 
+    .desc a, .hotel a, .memo a {
+      color: #bfe0ff;
+      font-weight: 850;
+      text-decoration: underline;
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 3px;
+      word-break: break-all;
+    }
+    .voucher-box {
+      margin-top: 13px;
+      padding: 13px;
+      border-radius: 19px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.15);
+      display: grid;
+      gap: 10px;
+    }
+    .voucher-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      color: rgba(255,255,255,.82);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .voucher-type {
+      border-radius: 999px;
+      padding: 4px 8px;
+      color: #3a2500;
+      background: linear-gradient(135deg, #ffe17a, #ffb300);
+      font-size: 10px;
+      letter-spacing: .2px;
+    }
+    .code-render {
+      min-height: 132px;
+      display: grid;
+      place-items: center;
+      padding: 10px;
+      border-radius: 16px;
+      background: #fff;
+      overflow-x: auto;
+    }
+    .code-render img, .code-render canvas {
+      max-width: 100%;
+      height: auto;
+      image-rendering: pixelated;
+    }
+    .code-render svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+    .code-render.fallback-only {
+      min-height: auto;
+      color: #111;
+      font-weight: 900;
+      word-break: break-all;
+      text-align: center;
+    }
+    .voucher-raw {
+      color: rgba(255,255,255,.72);
+      font-size: 12px;
+      line-height: 1.35;
+      word-break: break-all;
+    }
+    .share-id-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin: 10px 0 4px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      color: #d7ffe3;
+      background: rgba(48,209,88,.13);
+      border: 1px solid rgba(48,209,88,.25);
+      font-size: 11px;
+      font-weight: 920;
+      letter-spacing: .3px;
+    }
+    .code-grid { display: grid; grid-template-columns: 1.4fr .8fr; gap: 12px; }
+    .star-form-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(255,255,255,.80);
+      font-size: 13px;
+      font-weight: 850;
+      padding: 11px 12px;
+      border-radius: 17px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .star-form-row input { width: 20px; height: 20px; accent-color: #ffb300; padding: 0; }
+
     .empty-day {
       padding: 24px;
       border-radius: 24px;
@@ -369,6 +592,45 @@
       background: rgba(255,255,255,.08);
       border: 1px dashed rgba(255,255,255,.20);
     }
+
+    .onboarding {
+      margin-top: 18px;
+      padding: 22px;
+      border-radius: 28px;
+      background: linear-gradient(145deg, rgba(255,255,255,.15), rgba(255,255,255,.07));
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: var(--shadow);
+      text-align: left;
+    }
+    .onboarding h3 { margin: 0 0 8px; font-size: 22px; letter-spacing: -.3px; }
+    .onboarding p { margin: 0; color: rgba(255,255,255,.68); line-height: 1.55; font-size: 14px; }
+    .onboarding-steps { display: grid; gap: 9px; margin: 16px 0; }
+    .onboarding-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 17px;
+      background: rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.11);
+      color: rgba(255,255,255,.82);
+      font-weight: 820;
+      font-size: 13px;
+    }
+    .onboarding-step b {
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff375f, #7c5cff);
+      color: white;
+      flex: 0 0 auto;
+      font-size: 12px;
+    }
+    .onboarding-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
+    .onboarding-actions .pill-btn { min-height: 42px; }
+
 
     .day-rail {
       position: fixed;
@@ -421,7 +683,7 @@
       bottom: calc(90px + var(--safe-bottom));
       width: 58px; height: 58px;
       border-radius: 22px;
-      display: none;
+      display: grid;
       place-items: center;
       color: white;
       font-size: 28px;
@@ -429,7 +691,6 @@
       background: linear-gradient(135deg, #ff375f, #7c5cff);
       box-shadow: 0 18px 50px rgba(255,55,95,.33);
     }
-    body.editing .fab { display: grid; }
 
     .toast {
       position: fixed;
@@ -497,16 +758,30 @@
     .form-actions { display: flex; gap: 9px; margin-top: 16px; }
     .form-actions .pill-btn { flex: 1; min-height: 48px; }
     .helper { color: rgba(255,255,255,.48); font-size: 12px; line-height: 1.45; margin: 10px 2px 0; }
+    .folder-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      color: rgba(255,255,255,.76);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.12);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .time-grid { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+    .day-target-note { color: rgba(255,255,255,.50); font-size: 11.5px; line-height: 1.35; margin-top: -4px; }
 
     .backup-row {
-      display: none;
+      display: flex;
       max-width: 860px;
       margin: 10px auto 0;
       gap: 8px;
       padding: 0 4px;
       overflow-x: auto;
     }
-    body.editing .backup-row { display: flex; }
     .backup-row .pill-btn { min-height: 34px; font-size: 12px; padding: 0 11px; flex: 0 0 auto; }
     #importFile { display: none; }
 
@@ -537,6 +812,14 @@
     }
     .live-chip.next { background: rgba(255,159,10,.19); border-color: rgba(255,159,10,.33); }
 
+    .event-card.is-now .time,
+    .event-card.is-next .time {
+      animation: timeSlowBlink 2.8s ease-in-out infinite;
+      will-change: opacity, filter;
+    }
+    .event-card.is-now .time { color: #d7ffe3; text-shadow: 0 0 16px rgba(48,209,88,.32); }
+    .event-card.is-next .time { color: #ffd08a; text-shadow: 0 0 16px rgba(255,159,10,.30); }
+
     .day-page.active .hero { animation: heroIn .46s var(--ease-spring) both; }
     .day-page.active .event-card { animation: cardIn .46s var(--ease-spring) both; animation-delay: min(calc(var(--i, 0) * 34ms), 260ms); }
     .day-page.active .event-card.focus-pulse { animation: focusPulse .85s var(--ease-spring) both; }
@@ -546,11 +829,73 @@
     @keyframes heroIn { from { opacity: .35; transform: translateY(18px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
     @keyframes cardIn { from { opacity: 0; transform: translateY(18px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
     @keyframes focusPulse { 0% { transform: translateY(0) scale(1); } 42% { transform: translateY(-3px) scale(1.012); } 100% { transform: translateY(0) scale(1); } }
+    @keyframes timeSlowBlink { 0%, 100% { opacity: 1; filter: brightness(1); } 50% { opacity: .52; filter: brightness(1.35); } }
     @keyframes sheetIn { from { transform: translateY(22px) scale(.985); opacity: .78; } to { transform: translateY(0) scale(1); opacity: 1; } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     body, .topbar, .day-rail, .event-card, .hero, .pill-btn, .day-tab, .sheet, input, textarea, select, .toast {
       transition: background .35s ease, color .35s ease, border-color .35s ease, box-shadow .35s ease, opacity .25s ease, transform .25s ease;
+    }
+
+
+
+    .settings-toggle { width: 42px; min-width: 42px; padding: 0; font-size: 17px; }
+    .settings-menu {
+      position: fixed;
+      z-index: 75;
+      top: calc(58px + var(--safe-top));
+      right: max(12px, calc((100vw - min(860px, 100vw)) / 2 + 12px));
+      width: min(235px, calc(100vw - 24px));
+      display: grid;
+      gap: 7px;
+      padding: 10px;
+      border-radius: 20px;
+      background: rgba(24,25,36,.92);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 20px 55px rgba(0,0,0,.42);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+    .settings-menu[hidden] { display: none; }
+    .settings-item {
+      width: 100%;
+      min-height: 42px;
+      padding: 0 13px;
+      border-radius: 14px;
+      text-align: left;
+      color: var(--text);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.13);
+      font-weight: 850;
+    }
+    .settings-item.primary { color: white; background: linear-gradient(135deg, rgba(255,55,95,.92), rgba(124,92,255,.92)); border-color: transparent; }
+    .settings-item.danger { color: #ffd3d3; background: rgba(255,59,48,.14); }
+    .settings-item.share-on {
+      color: #d7ffe3;
+      background: rgba(48,209,88,.14);
+      border-color: rgba(48,209,88,.28);
+    }
+    .settings-item:active { transform: scale(.985); }
+
+
+    .auto-link {
+      color: #8ed8ff;
+      font-weight: 850;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: break-all;
+    }
+    body[data-theme="light"] .auto-link { color: #075cae; }
+
+    .duration-chip {
+      color: #ffd36f;
+      background: rgba(255,159,10,.13);
+      border: 1px solid rgba(255,159,10,.22);
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-size: 11px;
+      font-weight: 950;
+      white-space: nowrap;
     }
 
     body[data-theme="light"]::before {
@@ -571,6 +916,9 @@
     body[data-theme="light"] .pill-btn.primary { color: white; background: linear-gradient(135deg, #ff2d55, #6b54ff); }
     body[data-theme="light"] .pill-btn.warn { color: #8a4b00; background: rgba(255,159,10,.16); }
     body[data-theme="light"] .status-line { color: rgba(20,20,30,.55); }
+    body[data-theme="light"] .trip-name-line { color: rgba(20,20,30,.72) !important; }
+    body[data-theme="light"] .trip-name-pill { color: rgba(20,20,30,.72); background: rgba(255,255,255,.58); border-color: rgba(0,0,0,.06); }
+    body[data-theme="light"] .trip-name-pill .share-mini { color: #14782d; background: rgba(48,209,88,.12); }
     body[data-theme="light"] .edit-badge { color: #b30f35; }
     body[data-theme="light"] .hero {
       background: linear-gradient(145deg, rgba(255,255,255,.84), rgba(255,255,255,.56)), radial-gradient(circle at 92% 18%, rgba(10,132,255,.14), transparent 29%);
@@ -584,6 +932,9 @@
       border-color: rgba(0,0,0,.07);
       color: rgba(20,20,30,.72);
     }
+    body[data-theme="light"] button.stat.active { color: white; background: linear-gradient(135deg, rgba(255,45,85,.95), rgba(107,84,255,.95)); border-color: transparent; }
+    body[data-theme="light"] .filter-banner { color: #8a4b00; background: rgba(255,159,10,.16); border-color: rgba(180,120,0,.12); }
+    body[data-theme="light"] .filter-clear { color: #11131a; background: rgba(255,255,255,.72); border-color: rgba(0,0,0,.08); }
     body[data-theme="light"] .event-card {
       background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.62));
       border-color: rgba(255,255,255,.72);
@@ -597,7 +948,25 @@
     body[data-theme="light"] .card-actions { border-top-color: rgba(0,0,0,.07); }
     body[data-theme="light"] .mini-btn.danger { color: #ac1e18; background: rgba(255,59,48,.10); }
     body[data-theme="light"] .mini-btn.good { color: #14782d; background: rgba(48,209,88,.12); }
+    body[data-theme="light"] .icon-edit-btn { color: white; background: linear-gradient(135deg, rgba(255,45,85,.95), rgba(107,84,255,.95)); border-color: transparent; }
+
+    body[data-theme="light"] .icon-star-btn { color: rgba(20,20,30,.55); background: rgba(255,255,255,.72); border-color: rgba(0,0,0,.08); }
+    body[data-theme="light"] .icon-star-btn.active { color: #3a2500; background: linear-gradient(135deg, #ffe17a, #ffb300); border-color: rgba(210,144,0,.18); }
+    body[data-theme="light"] .event-card.is-starred {
+      background: linear-gradient(180deg, rgba(255,235,153,.86), rgba(255,205,64,.42));
+      border-color: rgba(255,179,0,.42);
+      box-shadow: 0 18px 48px rgba(255,179,0,.18);
+    }
+    body[data-theme="light"] .desc a, body[data-theme="light"] .hotel a, body[data-theme="light"] .memo a { color: #075cae; }
+    body[data-theme="light"] .voucher-box { background: rgba(255,255,255,.70); border-color: rgba(0,0,0,.08); }
+    body[data-theme="light"] .voucher-head { color: rgba(20,20,30,.74); }
+    body[data-theme="light"] .voucher-raw { color: rgba(20,20,30,.66); }
+    body[data-theme="light"] .share-id-chip { color: #14782d; background: rgba(48,209,88,.12); }
+    body[data-theme="light"] .star-form-row { color: rgba(20,20,30,.70); background: rgba(255,255,255,.68); border-color: rgba(0,0,0,.08); }
     body[data-theme="light"] .empty-day { color: rgba(20,20,30,.55); background: rgba(255,255,255,.62); border-color: rgba(0,0,0,.10); }
+    body[data-theme="light"] .onboarding { background: linear-gradient(145deg, rgba(255,255,255,.86), rgba(255,255,255,.62)); border-color: rgba(255,255,255,.72); }
+    body[data-theme="light"] .onboarding p { color: rgba(20,20,30,.64); }
+    body[data-theme="light"] .onboarding-step { color: rgba(20,20,30,.74); background: rgba(255,255,255,.70); border-color: rgba(0,0,0,.07); }
     body[data-theme="light"] .day-tab {
       color: rgba(20,20,30,.52);
       background: rgba(255,255,255,.68);
@@ -614,6 +983,8 @@
     body[data-theme="light"] .grabber { background: rgba(0,0,0,.18); }
     body[data-theme="light"] .close-btn { color: var(--text); background: rgba(0,0,0,.07); }
     body[data-theme="light"] label, body[data-theme="light"] .helper { color: rgba(20,20,30,.58); }
+    body[data-theme="light"] .folder-note { color: rgba(20,20,30,.65); background: rgba(255,255,255,.58); border-color: rgba(0,0,0,.06); }
+    body[data-theme="light"] .day-target-note { color: rgba(20,20,30,.48); }
     body[data-theme="light"] input, body[data-theme="light"] textarea, body[data-theme="light"] select {
       color: var(--text);
       background: rgba(255,255,255,.72);
@@ -622,6 +993,14 @@
     body[data-theme="light"] .toast { color: #11131a; background: rgba(255,255,255,.86); border-color: rgba(0,0,0,.08); }
     body[data-theme="light"] .live-chip { color: #0b6022; background: rgba(48,209,88,.15); }
     body[data-theme="light"] .live-chip.next { color: #8a4b00; background: rgba(255,159,10,.15); }
+
+    body[data-theme="light"] .settings-menu { background: rgba(250,252,255,.96); border-color: rgba(0,0,0,.08); box-shadow: 0 20px 50px rgba(38,51,86,.18); }
+    body[data-theme="light"] .settings-item { background: rgba(255,255,255,.72); border-color: rgba(0,0,0,.08); color: var(--text); }
+    body[data-theme="light"] .settings-item.primary { color: white; background: linear-gradient(135deg, #ff2d55, #6b54ff); }
+    body[data-theme="light"] .settings-item.danger { color: #ac1e18; background: rgba(255,59,48,.11); }
+    body[data-theme="light"] .duration-chip { color: #8a4b00; background: rgba(255,159,10,.16); border-color: rgba(255,159,10,.25); }
+    body[data-theme="light"] .event-card.is-now .time { color: #137b2e; text-shadow: 0 0 12px rgba(48,209,88,.20); }
+    body[data-theme="light"] .event-card.is-next .time { color: #a65d00; text-shadow: 0 0 12px rgba(255,159,10,.20); }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }
@@ -635,40 +1014,120 @@
       .form-grid.two { grid-template-columns: 1fr 1fr; }
     }
 
+    @media (max-width: 620px) {
+      .topbar {
+        padding: calc(10px + var(--safe-top)) 12px 9px;
+      }
+      .topbar-inner {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: flex-start;
+      }
+      .app-title {
+        width: 100%;
+        min-width: 0;
+        gap: 10px;
+        align-items: center;
+      }
+      .app-title h1 {
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        font-size: clamp(17px, 5.2vw, 20px);
+        line-height: 1.12;
+      }
+      .app-title p {
+        margin-top: 3px;
+        font-size: 11px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .trip-name-line { max-width: calc(100vw - 170px); }
+      .toolbar {
+        width: auto;
+        display: flex;
+        justify-self: end;
+        justify-content: flex-end;
+        gap: 6px;
+      }
+      .toolbar .pill-btn {
+        width: auto;
+        min-height: 34px;
+        padding: 0 10px;
+        font-size: 12.5px;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .theme-toggle {
+        min-width: 38px;
+        padding: 0 9px;
+      }
+      .status-line {
+        margin-top: 8px;
+        font-size: 10.5px;
+        align-items: center;
+      }
+      .status-line > span {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .time-grid { grid-template-columns: 1fr 1fr; }
+
+      .code-grid { grid-template-columns: 1fr; }
+      .icon-star-btn { width: 32px; height: 32px; border-radius: 12px; font-size: 16px; }
+      .day-page {
+        padding-top: calc(132px + var(--safe-top));
+      }
+    }
+
     @media (max-width: 380px) {
       .pill-btn { padding: 0 10px; }
       .app-icon { width: 42px; height: 42px; }
       .toolbar { gap: 6px; }
       .hero { padding: 19px; }
-      .tag { max-width: 38%; }
+      .card-top-right { max-width: 52%; flex-basis: 52%; }
+      .icon-edit-btn { width: 32px; height: 32px; border-radius: 12px; font-size: 16px; }
+      .icon-star-btn { width: 32px; height: 32px; border-radius: 12px; font-size: 16px; }
+      .tag { max-width: 100%; }
     }
   </style>
-<script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1781973178555&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000007c0072088996228bf4a0901c%26ts%3D494992%26p%3Dfs%26cid%3D1%26sig%3D5c5273087d0ff6d6b4e112c725f6d612620826f52802afbc3700c103ad52e7fd%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=0&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1781973178555&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+  <script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782014370795&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000700472088a575a1ed6d1b704%26fn%3DPremium_Trip_Firebase_connected.html%26cd%3Dattachment%26ts%3D495004%26p%3Dfs%26cid%3D1%26sig%3Db75e26233f70cf44df347ed7f84afb18d14e40a1db2ed867c3b4dc0b70b6dafb%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=0&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782014370795&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+</head>
 <body>
   <header class="topbar">
     <div class="topbar-inner">
       <div class="app-title">
         <div class="app-icon" aria-hidden="true">旅</div>
         <div>
-          <h1>中部北陸・Premium Trip</h1>
+          <h1 id="appTitleText">優旅程 - Premium Trip</h1>
+          <p class="trip-name-line">旅程：<span id="tripNameText">未命名旅程</span></p>
           <p id="currentDayLabel">左右橫掃切換日子</p>
         </div>
       </div>
       <div class="toolbar">
         <button class="pill-btn now-btn" id="nowBtn" type="button">◎ 現在</button>
         <button class="pill-btn theme-toggle" id="themeBtn" type="button" aria-label="切換暗黑或日光模式">🌙</button>
-        <button class="pill-btn" id="editToggle" type="button">修改</button>
-        <button class="pill-btn primary" id="saveBtn" type="button">儲存</button>
+        <button class="pill-btn settings-toggle" id="settingsBtn" type="button" aria-label="設定">⚙️</button>
       </div>
     </div>
     <div class="status-line">
-      <span><span class="edit-badge">編輯模式開啟・</span><span id="saveStatus">尚未修改</span></span>
+      <span><span id="saveStatus">尚未修改</span></span>
       <span id="countStatus"></span>
     </div>
-    <div class="backup-row" aria-label="備份及重置工具">
-      <button class="pill-btn" id="exportBtn" type="button">匯出備份</button>
-      <button class="pill-btn" id="importBtn" type="button">匯入備份</button>
-      <button class="pill-btn warn" id="resetBtn" type="button">還原原版</button>
+    <div class="settings-menu" id="settingsMenu" hidden aria-label="設定選單">
+      <button class="settings-item primary" id="editTitleBtn" type="button">✏️ 修改旅程名稱</button>
+      <button class="settings-item" id="newDayBtn" type="button">＋ 新增日子</button>
+      <button class="settings-item" id="shareSetupBtn" type="button">🔐 分享 / Firebase 準備</button>
+      <button class="settings-item primary" id="firebaseSaveBtn" type="button">☁️ 上載到 Firebase</button>
+      <button class="settings-item" id="firebaseLoadBtn" type="button">📥 從 Firebase 載入</button>
+      <button class="settings-item" id="exportBtn" type="button">匯出備份</button>
+      <button class="settings-item" id="importBtn" type="button">匯入備份</button>
+      <button class="settings-item danger" id="initBtn" type="button">初始化</button>
       <input id="importFile" type="file" accept="application/json,.json" />
     </div>
   </header>
@@ -691,31 +1150,71 @@
       </div>
 
       <form id="eventForm" class="form-grid">
-        <div class="form-grid two">
-          <label>時間
-            <input id="fTime" name="time" placeholder="例如：09:00 — 10:30" />
+        <div class="time-grid">
+          <label>開始時間
+            <select id="fStartTime" name="startTime"></select>
           </label>
-          <label>分類
-            <input id="fTag" name="tag" placeholder="早餐 / 購物 / 駕駛 / 觀光" />
+          <label>結束時間
+            <select id="fEndTime" name="endTime"></select>
           </label>
         </div>
+        <label>分類（可選擇或自由寫）
+          <input id="fTag" name="tag" list="tagOptions" placeholder="選擇或輸入分類" />
+          <datalist id="tagOptions">
+            <option value="早餐"></option>
+            <option value="午餐"></option>
+            <option value="晚餐"></option>
+            <option value="購物"></option>
+            <option value="觀光"></option>
+            <option value="步行/觀光"></option>
+            <option value="駕駛"></option>
+            <option value="乘地鐵"></option>
+            <option value="乘名鐵"></option>
+            <option value="交通"></option>
+            <option value="手續"></option>
+            <option value="休息"></option>
+            <option value="休息/手續"></option>
+            <option value="離境及抵達"></option>
+            <option value="其他"></option>
+          </datalist>
+        </label>
+        <label>放入日子
+          <select id="fDayTarget" name="dayTarget"></select>
+        </label>
+        <div class="day-target-note">可先建立新日子，再把行程新增或搬移到該日子。</div>
         <label>地點 / 標題
           <input id="fTitle" name="title" placeholder="輸入行程地點或活動名稱" />
         </label>
         <label>行程內容
           <textarea id="fDesc" name="desc" placeholder="行程詳情、交通、目標、餐廳備註……"></textarea>
         </label>
-        <label>住宿 / 重要提醒（可留空）
-          <textarea id="fHotel" name="hotel" placeholder="今晚入住、訂房資訊、特殊提醒……"></textarea>
+        <label>重要提醒
+          <textarea id="fHotel" name="hotel" placeholder="訂房資訊、集合地點、特殊提醒……"></textarea>
         </label>
-        <label>私人備忘（只顯示在此 HTML）
+        <label>私人備忘
           <textarea id="fMemo" name="memo" placeholder="例如：記得帶護照、先買票、預約號碼……"></textarea>
         </label>
+        <label class="star-form-row">
+          <input id="fStarred" name="starred" type="checkbox" />
+          <span>⭐ 標記為期待 / 關注行程</span>
+        </label>
+        <div class="code-grid">
+          <label>兌換碼 / 優惠碼/ 票券編號
+            <input id="fCodeText" name="codeText" placeholder="例如：NAGOYA2026 / 預約編號 / 兌換URL" />
+          </label>
+          <label>顯示形式
+            <select id="fCodeType" name="codeType">
+              <option value="">只顯示文字</option>
+              <option value="qr">QR code</option>
+              <option value="barcode">條碼</option>
+            </select>
+          </label>
+        </div>
         <div class="form-actions">
           <button class="pill-btn" id="cancelEvent" type="button">取消</button>
           <button class="pill-btn primary" type="submit">儲存行程</button>
         </div>
-        <p class="helper">所有修改會儲存在此裝置瀏覽器的 localStorage。旅途中即使重新開啟同一個 HTML，已儲存版本仍會保留；用「匯出備份」可另存 JSON。</p>
+        <p class="helper">所有修改會優先儲存在此裝置瀏覽器內；用「匯出備份」可另存 JSON。</p>
       </form>
 
       <form id="dayForm" class="form-grid" hidden>
@@ -723,14 +1222,15 @@
           <label>日子標題
             <input id="dDay" name="day" placeholder="Day 1" />
           </label>
-          <label>日期文字
-            <input id="dDate" name="date" placeholder="6月23日 (週二) - Day 1" />
+          <label>日期
+            <input id="dDate" name="date" type="date" />
           </label>
         </div>
         <div class="form-actions">
           <button class="pill-btn" id="cancelDay" type="button">取消</button>
           <button class="pill-btn primary" type="submit">儲存日子</button>
         </div>
+        <p class="helper">建立日子後，可在新增或修改行程時選擇把行程放入哪一天。</p>
       </form>
     </section>
   </div>
@@ -1419,13 +1919,19 @@
 ];
     const STORAGE_KEY = "nagoya-premium-trip-v2";
     const THEME_KEY = "nagoya-premium-trip-theme";
+    const APP_TITLE_KEY = "nagoya-premium-trip-title";
+    const SHARE_KEY = "premium-trip-share-settings";
+    const DEFAULT_APP_TITLE = "優旅程 - Premium Trip";
+    const DEFAULT_TRIP_NAME = "未命名旅程";
     const TRIP_YEAR = 2026;
+    const WEEKDAY_ZH = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
     let trip = loadTrip();
     let activeDay = 0;
     let editMode = false;
+    let activeFilter = "all";
     let scrollRaf = null;
     let momentFocus = null;
     let editorState = { mode: "event", dayIndex: 0, eventIndex: null };
@@ -1439,21 +1945,196 @@
     const sheetBackdrop = $("#sheetBackdrop");
 
     function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
+    function storageGet(key) {
+      try { return window.localStorage ? localStorage.getItem(key) : null; }
+      catch (error) { console.warn("localStorage read unavailable", error); return null; }
+    }
+    function storageSet(key, value) {
+      try { if (window.localStorage) localStorage.setItem(key, value); return true; }
+      catch (error) { console.warn("localStorage write unavailable", error); return false; }
+    }
+    function storageRemove(key) {
+      try { if (window.localStorage) localStorage.removeItem(key); return true; }
+      catch (error) { console.warn("localStorage remove unavailable", error); return false; }
+    }
     function loadTrip() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return deepClone(STARTER_DATA);
+        const raw = storageGet(STORAGE_KEY);
+        if (!raw) return normalizeTripData(deepClone(STARTER_DATA));
         const parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed) || !parsed.length) throw new Error("Invalid saved trip");
-        return parsed;
+        const savedTrip = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.trip) ? parsed.trip : null);
+        if (!savedTrip) throw new Error("Invalid saved trip");
+        if (parsed && parsed.tripName) applyAppTitle(parsed.tripName, { persist: true });
+        else if (parsed && parsed.appTitle && parsed.appTitle !== DEFAULT_APP_TITLE && parsed.appTitle !== "中部北陸・Premium Trip") applyAppTitle(parsed.appTitle, { persist: true });
+        if (parsed && parsed.share && parsed.share.enabled) storageSet(SHARE_KEY, JSON.stringify(parsed.share));
+        return normalizeTripData(savedTrip);
       } catch (error) {
         console.warn(error);
-        return deepClone(STARTER_DATA);
+        return normalizeTripData(deepClone(STARTER_DATA));
       }
     }
 
+    function loadAppTitle() {
+      const saved = storageGet(APP_TITLE_KEY);
+      if (!saved || saved === DEFAULT_APP_TITLE || saved === "中部北陸・Premium Trip") return DEFAULT_TRIP_NAME;
+      return String(saved).trim() || DEFAULT_TRIP_NAME;
+    }
+
+    function applyAppTitle(title = loadAppTitle(), options = {}) {
+      const clean = String(title || "").trim() || DEFAULT_TRIP_NAME;
+      const appTitleEl = $("#appTitleText");
+      if (appTitleEl) appTitleEl.textContent = DEFAULT_APP_TITLE;
+      const tripNameEl = $("#tripNameText");
+      if (tripNameEl) tripNameEl.textContent = clean;
+      document.title = DEFAULT_APP_TITLE;
+      if (options.persist !== false) storageSet(APP_TITLE_KEY, clean);
+      return clean;
+    }
+
+    function editAppTitle() {
+      closeSettingsMenu();
+      const current = loadAppTitle();
+      const next = prompt("輸入旅程名稱", current);
+      if (next === null) return;
+      const clean = applyAppTitle(next, { persist: true });
+      saveStatus.textContent = "旅程名稱已更新";
+      persist(false);
+      render();
+      showToast(`旅程名稱已改為：${clean}`);
+    }
+
+    function loadShareSettings() {
+      try {
+        const raw = storageGet(SHARE_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        if (!parsed || !parsed.enabled) return { enabled: false };
+        return {
+          enabled: true,
+          tripShareId: parsed.tripShareId || "",
+          password: parsed.password || "",
+          enabledAt: parsed.enabledAt || "",
+          updatedAt: parsed.updatedAt || ""
+        };
+      } catch (error) {
+        console.warn("Share settings read failed", error);
+        return { enabled: false };
+      }
+    }
+
+    function isShareEnabled() {
+      return !!loadShareSettings().enabled;
+    }
+
+    function isValidSharePassword(value = "") {
+      return /^[A-Za-z0-9]{8,}$/.test(String(value || ""));
+    }
+
+    function randomAlphaNum(length = 10) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      const out = [];
+      if (window.crypto && crypto.getRandomValues) {
+        const bytes = new Uint32Array(length);
+        crypto.getRandomValues(bytes);
+        for (let i = 0; i < length; i++) out.push(chars[bytes[i] % chars.length]);
+      } else {
+        for (let i = 0; i < length; i++) out.push(chars[Math.floor(Math.random() * chars.length)]);
+      }
+      return out.join("");
+    }
+
+    function collectShareIds() {
+      const ids = new Set();
+      const settings = loadShareSettings();
+      if (settings.tripShareId) ids.add(settings.tripShareId);
+      return ids;
+    }
+
+    function uniqueShareId(ids = collectShareIds()) {
+      let id = randomAlphaNum(10);
+      while (ids.has(id)) id = randomAlphaNum(10);
+      ids.add(id);
+      return id;
+    }
+
+    function ensureEventShareIds() {
+      // Firebase 分享只使用整個旅程的一個分享 ID；此函數只保留作向後兼容。
+      removeEventShareIds();
+    }
+
+    function removeEventShareIds() {
+      trip.forEach(day => (day.events || []).forEach(ev => { delete ev.shareId; }));
+    }
+
+    function updateShareButton() {
+      const btn = $("#shareSetupBtn");
+      if (!btn) return;
+      const settings = loadShareSettings();
+      if (settings.enabled) {
+        btn.textContent = "🔐 分享準備已開啟";
+        btn.classList.add("share-on");
+        btn.title = settings.tripShareId ? `旅程分享 ID：${settings.tripShareId}` : "分享準備已開啟";
+      } else {
+        btn.textContent = "🔐 分享 / Firebase 準備";
+        btn.classList.remove("share-on");
+        btn.removeAttribute("title");
+      }
+    }
+
+    function openShareSetup() {
+      closeSettingsMenu();
+      const current = loadShareSettings();
+      if (current.enabled) {
+        const choice = prompt(
+          `分享 / Firebase 準備已開啟\n旅程分享 ID：${current.tripShareId}\n\n輸入 1：查看狀態\n輸入 2：更改密碼\n輸入 3：關閉分享並刪除旅程分享 ID`,
+          "1"
+        );
+        if (choice === null) return;
+        if (choice.trim() === "1") {
+          alert(`旅程名稱：${loadAppTitle()}\n旅程分享 ID：${current.tripShareId}\n此 ID 代表整個旅程。Firebase 尚未連接；目前是本機分享資料準備模式。`);
+          return;
+        }
+        if (choice.trim() === "2") {
+          const nextPassword = prompt("輸入新的分享密碼：只可用英文字母及數字，最少 8 位", "");
+          if (nextPassword === null) return;
+          if (!isValidSharePassword(nextPassword)) return alert("密碼格式不正確：必須為 8 位或以上英數字，只可包含 A-Z、a-z、0-9。");
+          storageSet(SHARE_KEY, JSON.stringify({ ...current, password: nextPassword, updatedAt: new Date().toISOString() }));
+          updateShareButton();
+          persist(false);
+          return showToast("分享密碼已更新");
+        }
+        if (choice.trim() === "3") {
+          const ok = confirm("確定關閉分享準備？旅程分享 ID 會從本機資料中刪除，回到純 localStorage 模式。");
+          if (!ok) return;
+          removeEventShareIds();
+          storageRemove(SHARE_KEY);
+          updateShareButton();
+          render();
+          persist(false);
+          return showToast("已關閉分享準備並刪除旅程分享 ID");
+        }
+        return;
+      }
+
+      const password = prompt("開啟分享 / Firebase 準備前，請設定分享密碼：只可用英文字母及數字，最少 8 位", "");
+      if (password === null) return;
+      if (!isValidSharePassword(password)) return alert("密碼格式不正確：必須為 8 位或以上英數字，只可包含 A-Z、a-z、0-9。");
+      const ids = collectShareIds();
+      const share = {
+        enabled: true,
+        tripShareId: uniqueShareId(ids),
+        password,
+        enabledAt: new Date().toISOString()
+      };
+      storageSet(SHARE_KEY, JSON.stringify(share));
+      removeEventShareIds();
+      updateShareButton();
+      render();
+      persist(false);
+      alert(`已開啟分享 / Firebase 準備\n旅程分享 ID：${share.tripShareId}\n此 ID 代表整個旅程。`);
+    }
+
     function preferredTheme() {
-      const saved = localStorage.getItem(THEME_KEY);
+      const saved = storageGet(THEME_KEY);
       if (saved === "light" || saved === "dark") return saved;
       return window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
     }
@@ -1461,7 +2142,7 @@
     function applyTheme(theme) {
       const safeTheme = theme === "light" ? "light" : "dark";
       document.body.dataset.theme = safeTheme;
-      localStorage.setItem(THEME_KEY, safeTheme);
+      storageSet(THEME_KEY, safeTheme);
       const themeColor = safeTheme === "light" ? "#f7f8fd" : "#090A12";
       const meta = document.querySelector('meta[name="theme-color"]');
       if (meta) meta.setAttribute("content", themeColor);
@@ -1470,10 +2151,42 @@
       if (btn) btn.setAttribute("aria-label", safeTheme === "light" ? "切換到暗黑模式" : "切換到日光模式");
     }
 
+    function extractISOFromDayDate(value = "") {
+      const text = String(value || "").trim();
+      let m = text.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (m) return `${m[1]}-${padTimePart(m[2])}-${padTimePart(m[3])}`;
+      m = text.match(/(\d{1,2})月(\d{1,2})日/);
+      if (m) return `${TRIP_YEAR}-${padTimePart(m[1])}-${padTimePart(m[2])}`;
+      return "";
+    }
+
+    function formatDateLabel(iso = "") {
+      const clean = extractISOFromDayDate(iso);
+      if (!clean) return "";
+      const [year, month, day] = clean.split("-").map(Number);
+      const date = new Date(year, month - 1, day);
+      if (Number.isNaN(date.getTime())) return "";
+      return `${clean} (${WEEKDAY_ZH[date.getDay()]})`;
+    }
+
+    function normalizeDayDate(value = "") {
+      return formatDateLabel(value) || String(value || "").trim();
+    }
+
+    function normalizeTripData(data) {
+      return (Array.isArray(data) ? data : []).map((day, index) => ({
+        id: day.id || `day-${index + 1}`,
+        day: day.day || `Day ${index + 1}`,
+        date: normalizeDayDate(day.date || ""),
+        events: Array.isArray(day.events) ? day.events : []
+      }));
+    }
+
     function parseDayDate(day) {
-      const m = String(day.date || "").match(/(\d{1,2})月(\d{1,2})日/);
-      if (!m) return null;
-      return new Date(TRIP_YEAR, Number(m[1]) - 1, Number(m[2]), 0, 0, 0, 0);
+      const iso = extractISOFromDayDate(day && day.date);
+      if (!iso) return null;
+      const [year, month, date] = iso.split("-").map(Number);
+      return new Date(year, month - 1, date, 0, 0, 0, 0);
     }
 
     function sameCalendarDate(a, b) {
@@ -1488,6 +2201,116 @@
       if (end === undefined) end = /後|以後|after/i.test(value) ? 23 * 60 + 59 : Math.min(start + 45, 23 * 60 + 59);
       if (end < start) end += 24 * 60;
       return { start, end };
+    }
+
+    function padTimePart(value) { return String(value).padStart(2, "0"); }
+
+    function minutesToTime(value) {
+      if (value === null || value === undefined || Number.isNaN(value)) return "";
+      const minutes = ((value % (24 * 60)) + (24 * 60)) % (24 * 60);
+      return `${padTimePart(Math.floor(minutes / 60))}:${padTimePart(minutes % 60)}`;
+    }
+
+    const TIME_STEP_MINUTES = 5;
+
+    function buildTimeOptionsHTML() {
+      let html = '<option value="">--:--</option>';
+      for (let h = 0; h < 24; h += 1) {
+        for (let m = 0; m < 60; m += TIME_STEP_MINUTES) {
+          const value = `${padTimePart(h)}:${padTimePart(m)}`;
+          html += `<option value="${value}">${value}</option>`;
+        }
+      }
+      return html;
+    }
+
+    function setupTimeSelects() {
+      const html = buildTimeOptionsHTML();
+      [$("#fStartTime"), $("#fEndTime")].forEach((select) => {
+        if (select && !select.dataset.ready) {
+          select.innerHTML = html;
+          select.dataset.ready = "1";
+        }
+      });
+    }
+
+    function snapTimeToStep(value = "") {
+      const match = String(value || "").match(/^(\d{1,2}):(\d{2})$/);
+      if (!match) return "";
+      let h = Math.max(0, Math.min(23, Number(match[1])));
+      let m = Math.max(0, Math.min(59, Number(match[2])));
+      let total = h * 60 + m;
+      total = Math.round(total / TIME_STEP_MINUTES) * TIME_STEP_MINUTES;
+      total = Math.max(0, Math.min((23 * 60) + 55, total));
+      return minutesToTime(total);
+    }
+
+    function setTimeSelectValue(selector, value = "") {
+      const el = $(selector);
+      if (!el) return;
+      el.value = snapTimeToStep(value);
+    }
+
+    function extractTimeFields(value = "") {
+      const found = [...String(value).matchAll(/(\d{1,2}):(\d{2})/g)].map(m => `${padTimePart(m[1])}:${m[2]}`);
+      return {
+        start: found[0] || "",
+        end: found[1] || "",
+        suffix: /後|以後|after/i.test(value) ? "後" : ""
+      };
+    }
+
+    function composeTimeRange(start, end, suffix = "") {
+      const cleanStart = String(start || "").trim();
+      const cleanEnd = String(end || "").trim();
+      if (cleanStart && cleanEnd) return `${cleanStart} - ${cleanEnd}`;
+      if (cleanStart && suffix) return `${cleanStart}${suffix}`;
+      if (cleanStart) return cleanStart;
+      if (cleanEnd) return cleanEnd;
+      return "";
+    }
+
+    function formatDuration(minutes) {
+      if (!Number.isFinite(minutes) || minutes <= 0) return "";
+      const hrs = Math.floor(minutes / 60);
+      const mins = minutes % 60;
+      const parts = [];
+      if (hrs) parts.push(`${hrs} 小時`);
+      if (mins) parts.push(`${mins} 分鐘`);
+      return parts.join(" ");
+    }
+
+    function eventTimeParts(value = "") {
+      const text = String(value || "").trim();
+      if (!text) return { label: "未設定時間", duration: "" };
+      const fields = extractTimeFields(text);
+      if (fields.start && fields.end) {
+        const range = parseTimeRange(`${fields.start} - ${fields.end}`);
+        return {
+          label: `${fields.start} - ${fields.end}`,
+          duration: formatDuration(range.end - range.start)
+        };
+      }
+      if (fields.start) return { label: `${fields.start}${fields.suffix}`, duration: "" };
+      return { label: text, duration: "" };
+    }
+
+    function renderDayOptions(selectedIndex = activeDay) {
+      const select = $("#fDayTarget");
+      if (!select) return;
+      select.innerHTML = trip.map((day, index) => `
+        <option value="${index}" ${index === selectedIndex ? "selected" : ""}>${escapeHTML(day.day || `Day ${index + 1}`)}・${escapeHTML(day.date || "未設定日期")}</option>`).join("");
+    }
+
+    function sortEventsByTime(events = []) {
+      events.sort((a, b) => {
+        const at = parseTimeRange(a.time).start;
+        const bt = parseTimeRange(b.time).start;
+        if (at === null && bt === null) return 0;
+        if (at === null) return 1;
+        if (bt === null) return -1;
+        return at - bt;
+      });
     }
 
     function locateTripMoment(now = new Date()) {
@@ -1575,9 +2398,17 @@
       showToast(`已定位到${stateText}`);
     }
     function persist(show = true) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(trip));
+      const share = loadShareSettings();
+      const state = {
+        appTitle: DEFAULT_APP_TITLE,
+        tripName: loadAppTitle(),
+        trip,
+        ...(share.enabled ? { share } : {})
+      };
+      storageSet(STORAGE_KEY, JSON.stringify(state));
       const now = new Date();
       saveStatus.textContent = "已儲存：" + now.toLocaleTimeString("zh-HK", { hour: "2-digit", minute: "2-digit" });
+      updateShareButton();
       if (show) showToast("已儲存到此裝置");
     }
     function escapeHTML(value = "") {
@@ -1588,10 +2419,25 @@
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
     }
-    function lines(value = "") { return escapeHTML(value).replace(/\n/g, "<br>"); }
+    function linkifyText(value = "") {
+      const escaped = escapeHTML(value);
+      return escaped.replace(/((?:https?:\/\/|www\.)[^\s<]+)/gi, (match) => {
+        let clean = match;
+        let tail = "";
+        while (/[.,，。!?！？)）\]]$/.test(clean)) {
+          tail = clean.slice(-1) + tail;
+          clean = clean.slice(0, -1);
+        }
+        const href = /^www\./i.test(clean) ? `https://${clean}` : clean;
+        return `<a class="auto-link" href="${href}" target="_blank" rel="noopener noreferrer">${clean}</a>${tail}`;
+      });
+    }
+    function lines(value = "") { return linkifyText(value).replace(/\n/g, "<br>"); }
     function compactDate(date = "") {
-      const m = date.match(/(\d+月\d+日).*?(週.)/);
-      return m ? `${m[1]}` : date.replace(/\s*-\s*Day\s*\d+/i, "").slice(0, 8);
+      const iso = extractISOFromDayDate(date);
+      if (iso) return iso.slice(5);
+      const m = String(date || "").match(/(\d+月\d+日)/);
+      return m ? m[1] : String(date || "").replace(/\s*-\s*Day\s*\d+/i, "").slice(0, 10);
     }
     function tagIcon(tag = "") {
       const t = tag.toLowerCase();
@@ -1604,43 +2450,145 @@
       if (/手續|機場|登機|退房|入住/.test(tag)) return "🧾";
       return "✨";
     }
+    function eventSearchText(event = {}) {
+      return [event.tag, event.title, event.desc, event.hotel, event.memo].map(v => String(v || "")).join(" ");
+    }
+    function isFoodEvent(event = {}) {
+      return /早餐|午餐|晚餐|餐|咖啡|茶|甜品|壽司|燒肉|鰻|豬排|拉麵|咖哩|海鮮|牛|飯|市場/.test(eventSearchText(event));
+    }
+    function isTransportEvent(event = {}) {
+      return /駕|車|自駕|租車|還車|鐵|地鐵|交通|乘|站|機場|登機|抵達|出發|港|巴士|的士|taxi|airport|station/i.test(eventSearchText(event));
+    }
     function dayStats(day) {
-      const total = day.events.length;
-      const food = day.events.filter(e => /早餐|午餐|晚餐|餐|咖啡|壽司|燒肉|鰻|豬排/.test(e.tag + e.title + e.desc)).length;
-      const move = day.events.filter(e => /駕|車|鐵|地鐵|機場|交通|乘|站/.test(e.tag + e.title + e.desc)).length;
-      return { total, food, move };
+      const events = Array.isArray(day && day.events) ? day.events : [];
+      return {
+        total: events.length,
+        food: events.filter(isFoodEvent).length,
+        move: events.filter(isTransportEvent).length
+      };
+    }
+    function filterLabel(filter = activeFilter) {
+      if (filter === "food") return "美食點";
+      if (filter === "move") return "交通";
+      return "全部行程";
+    }
+    function filterEventsWithIndex(events = [], filter = activeFilter) {
+      return events.map((event, eventIndex) => ({ event, eventIndex })).filter(({ event }) => {
+        if (filter === "food") return isFoodEvent(event);
+        if (filter === "move") return isTransportEvent(event);
+        return true;
+      });
+    }
+
+
+    function renderCodeFallback(box, value, type) {
+      box.classList.add("fallback-only");
+      box.textContent = type === "barcode" ? `條碼文字：${value}` : `QR 文字：${value}`;
+    }
+
+    function renderCodes(root = document) {
+      $$(".code-render", root).forEach((box) => {
+        const value = String(box.dataset.codeText || "").trim();
+        const type = box.dataset.codeType === "barcode" ? "barcode" : "qr";
+        if (!value) return;
+        box.innerHTML = "";
+        box.classList.remove("fallback-only");
+        try {
+          if (type === "barcode") {
+            if (!window.JsBarcode) return renderCodeFallback(box, value, type);
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            box.appendChild(svg);
+            JsBarcode(svg, value, { format: "CODE128", displayValue: true, height: 58, margin: 8, fontSize: 14 });
+          } else {
+            if (!window.QRCode) return renderCodeFallback(box, value, type);
+            new QRCode(box, { text: value, width: 136, height: 136, colorDark: "#111111", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+          }
+        } catch (error) {
+          console.warn("Code render failed", error);
+          renderCodeFallback(box, value, type);
+        }
+      });
     }
 
     function render() {
       renderPages();
+      renderCodes(pager);
       renderRail();
       syncActiveUI(false);
       document.body.classList.toggle("editing", editMode);
     }
 
     function renderPages() {
+      if (!trip.length) {
+        pager.innerHTML = `
+          <section class="day-page active" id="day-empty" data-day="0">
+            <div class="day-wrap">
+              <div class="onboarding">
+                <h3>開始建立你的優旅程</h3>
+                <p>請先替整個旅程命名，再新增日子，最後逐項加入行程、交通、餐廳、酒店及兌換碼。</p>
+                <div class="onboarding-steps">
+                  <div class="onboarding-step"><b>1</b><span>先按「修改旅程名稱」，設定這次旅程的名稱。App 名稱會保持為「優旅程 - Premium Trip」。</span></div>
+                  <div class="onboarding-step"><b>2</b><span>按「新增日子」，選擇日期並命名 Day 1。</span></div>
+                  <div class="onboarding-step"><b>3</b><span>建立日子後，按「＋ 新增行程」加入第一個行程。</span></div>
+                </div>
+                <div class="onboarding-actions">
+                  <button class="pill-btn primary" type="button" data-action="edit-title">✏️ 修改旅程名稱</button>
+                  <button class="pill-btn" type="button" data-action="new-day-empty">＋ 新增日子</button>
+                </div>
+              </div>
+            </div>
+          </section>`;
+        return;
+      }
+      const totalEvents = trip.reduce((sum, day) => sum + ((day.events || []).length), 0);
       pager.innerHTML = trip.map((day, dayIndex) => {
         const stats = dayStats(day);
-        const eventsHTML = day.events.length ? day.events.map((event, eventIndex) => renderEvent(event, dayIndex, eventIndex)).join("") : `
+        const emptyMessage = totalEvents === 0
+          ? `
+          <div class="onboarding">
+            <h3>下一步：加入第一個行程</h3>
+            <p>旅程名稱和日子已準備好。現在可開始加入機場、酒店、餐廳、景點或優惠兌換資料。</p>
+            <div class="onboarding-steps">
+              <div class="onboarding-step"><b>1</b><span>按下方「＋ 新增行程」或右下角「＋」。</span></div>
+              <div class="onboarding-step"><b>2</b><span>選擇開始/結束時間；時間只提供每 5 分鐘一格，系統會自動計算歷時。</span></div>
+              <div class="onboarding-step"><b>3</b><span>可加入 ⭐、重要提醒、私人備忘、QR code、條碼或優惠碼文字。</span></div>
+            </div>
+            <div class="onboarding-actions">
+              <button class="pill-btn primary" type="button" data-action="add" data-day="${dayIndex}">＋ 新增行程</button>
+              <button class="pill-btn" type="button" data-action="edit-day" data-day="${dayIndex}">修改日子</button>
+            </div>
+          </div>`
+          : `
           <div class="empty-day">
-            <strong>這天暫時沒有行程</strong><br>開啟「修改」後按右下角＋新增。
+            <strong>這個日子暫時沒有行程</strong><br>可按右下角「＋」新增行程，或把其他行程搬移到這天。
           </div>`;
+        const filterForDay = dayIndex === activeDay ? activeFilter : "all";
+        const filteredEvents = filterEventsWithIndex(day.events || [], filterForDay);
+        const filterEmptyMessage = `
+          <div class="empty-day">
+            <strong>沒有符合「${escapeHTML(filterLabel(filterForDay))}」的行程</strong><br>可按上方「全部行程」返回完整列表。
+          </div>`;
+        const eventsHTML = day.events.length
+          ? (filteredEvents.length ? filteredEvents.map(({ event, eventIndex }) => renderEvent(event, dayIndex, eventIndex)).join("") : filterEmptyMessage)
+          : emptyMessage;
         return `
           <section class="day-page" id="day-${dayIndex + 1}" data-day="${dayIndex}">
             <div class="day-wrap">
               <div class="hero">
                 <div class="hero-content">
-                  <span class="eyebrow">🧭 Swipe Travel Planner</span>
+                  <div class="trip-name-pill">旅程：${escapeHTML(loadAppTitle())}${isShareEnabled() ? `<span class="share-mini">分享 ID：${escapeHTML(loadShareSettings().tripShareId || "")}</span>` : ""}</div>
                   <h2>${escapeHTML(day.day || `Day ${dayIndex + 1}`)}</h2>
                   <div class="date">${escapeHTML(day.date || "未設定日期")}</div>
-                  <div class="stats">
-                    <span class="stat">${stats.total} 個行程</span>
-                    <span class="stat">${stats.food} 個美食點</span>
-                    <span class="stat">${stats.move} 段交通</span>
+                  <div class="stats" aria-label="快速篩選行程">
+                    <button class="stat${filterForDay === "all" ? " active" : ""}" type="button" data-action="filter" data-day="${dayIndex}" data-filter="all">${stats.total} 個行程</button>
+                    <button class="stat${filterForDay === "food" ? " active" : ""}" type="button" data-action="filter" data-day="${dayIndex}" data-filter="food">${stats.food} 個美食點</button>
+                    <button class="stat${filterForDay === "move" ? " active" : ""}" type="button" data-action="filter" data-day="${dayIndex}" data-filter="move">${stats.move} 段交通</button>
                   </div>
+                  ${filterForDay !== "all" ? `<div class="filter-banner">正在顯示：${escapeHTML(filterLabel(filterForDay))}<button class="filter-clear" type="button" data-action="filter" data-day="${dayIndex}" data-filter="all">顯示全部</button></div>` : ""}
                   <div class="hero-actions">
                     <button class="mini-btn good" type="button" data-action="add" data-day="${dayIndex}">＋ 新增行程</button>
-                    <button class="mini-btn" type="button" data-action="edit-day" data-day="${dayIndex}">修改日期</button>
+                    <button class="mini-btn" type="button" data-action="edit-day" data-day="${dayIndex}">修改日子</button>
+                    <button class="mini-btn danger" type="button" data-action="delete-day" data-day="${dayIndex}">刪除日子</button>
                   </div>
                 </div>
               </div>
@@ -1653,25 +2601,47 @@
     function renderEvent(event, dayIndex, eventIndex) {
       const title = event.title ? escapeHTML(event.title) : "未命名行程";
       const titleClass = event.title ? "event-title" : "event-title empty";
+      const starred = !!event.starred;
+      const codeText = String(event.codeText || "").trim();
+      const codeType = event.codeType === "barcode" ? "barcode" : event.codeType === "qr" ? "qr" : "";
+      const timeInfo = eventTimeParts(event.time || "");
+      const shareHTML = "";
+      const voucherHTML = codeText ? (codeType ? `
+          <div class="voucher-box">
+            <div class="voucher-head"><span>🎫 兌換 / 優惠碼</span><span class="voucher-type">${codeType === "barcode" ? "BARCODE" : "QR CODE"}</span></div>
+            <div class="code-render" data-code-type="${codeType}" data-code-text="${escapeHTML(codeText)}"></div>
+            <div class="voucher-raw">${escapeHTML(codeText)}</div>
+          </div>` : `
+          <div class="voucher-box text-only">
+            <div class="voucher-head"><span>🎫 兌換 / 優惠碼</span><span class="voucher-type">文字</span></div>
+            <div class="voucher-raw">${linkifyText(codeText)}</div>
+          </div>`) : "";
       return `
-        <article class="event-card${momentClass(dayIndex, eventIndex)}" style="--i:${eventIndex}" data-day="${dayIndex}" data-event="${eventIndex}">
+        <article class="event-card${starred ? " is-starred" : ""}${momentClass(dayIndex, eventIndex)}" style="--i:${eventIndex}" data-day="${dayIndex}" data-event="${eventIndex}">
           <div class="card-top">
-            <div class="time">🕒 ${escapeHTML(event.time || "未設定時間")} ${momentChip(dayIndex, eventIndex)}</div>
-            <div class="tag" title="${escapeHTML(event.tag || "")}">${tagIcon(event.tag)} ${escapeHTML(event.tag || "行程")}</div>
+            <div class="time">🕒 <span>${escapeHTML(timeInfo.label)}</span>${timeInfo.duration ? `<span class="duration-chip">（${escapeHTML(timeInfo.duration)}）</span>` : ""} ${momentChip(dayIndex, eventIndex)}</div>
+            <div class="card-top-right">
+              <div class="tag" title="${escapeHTML(event.tag || "")}">${tagIcon(event.tag)} ${escapeHTML(event.tag || "行程")}</div>
+              <button class="icon-star-btn${starred ? " active" : ""}" type="button" data-action="star" data-day="${dayIndex}" data-event="${eventIndex}" aria-label="${starred ? "取消期待關注" : "標記為期待關注"}">⭐</button>
+              <button class="icon-edit-btn" type="button" data-action="edit" data-day="${dayIndex}" data-event="${eventIndex}" aria-label="修改 ${title}">📝</button>
+            </div>
           </div>
           <h3 class="${titleClass}">${title}</h3>
+          ${shareHTML}
           ${event.desc ? `<p class="desc">${lines(event.desc)}</p>` : `<p class="desc">未有行程內容。</p>`}
           ${event.hotel ? `<div class="hotel">🏨 ${lines(event.hotel)}</div>` : ""}
           <div class="memo">${event.memo ? "📝 " + lines(event.memo) : ""}</div>
+          ${voucherHTML}
           <div class="card-actions">
-            <button class="mini-btn" type="button" data-action="edit" data-day="${dayIndex}" data-event="${eventIndex}">修改</button>
             <button class="mini-btn" type="button" data-action="duplicate" data-day="${dayIndex}" data-event="${eventIndex}">複製</button>
+            <button class="mini-btn" type="button" data-action="move" data-day="${dayIndex}" data-event="${eventIndex}">移到其他日子</button>
             <button class="mini-btn danger" type="button" data-action="delete" data-day="${dayIndex}" data-event="${eventIndex}">刪除</button>
           </div>
         </article>`;
     }
 
     function renderRail() {
+      if (!trip.length) { dayRail.innerHTML = ""; return; }
       dayRail.innerHTML = trip.map((day, index) => `
         <button class="day-tab" type="button" data-goto="${index}" aria-label="前往 ${escapeHTML(day.day)}">
           <span>${escapeHTML(compactDate(day.date))}</span>
@@ -1689,6 +2659,9 @@
           ? (momentFocus.state === "now" ? "・LIVE" : momentFocus.state === "next" ? "・NEXT" : "")
           : "";
         countStatus.textContent = `${day.events.length} 個行程${liveText}`;
+      } else {
+        currentDayLabel.textContent = "請先新增日子";
+        countStatus.textContent = "0 個行程";
       }
       if (scrollTab) {
         const active = $(".day-tab.active");
@@ -1697,7 +2670,15 @@
     }
 
     function goToDay(index, smooth = true, scrollTab = true) {
-      activeDay = Math.max(0, Math.min(index, trip.length - 1));
+      if (!trip.length) {
+        activeDay = 0;
+        activeFilter = "all";
+        pager.scrollTo({ left: 0, behavior: smooth ? "smooth" : "auto" });
+        return syncActiveUI(scrollTab);
+      }
+      const nextDay = Math.max(0, Math.min(index, trip.length - 1));
+      if (nextDay !== activeDay) activeFilter = "all";
+      activeDay = nextDay;
       pager.scrollTo({ left: activeDay * window.innerWidth, behavior: smooth ? "smooth" : "auto" });
       syncActiveUI(scrollTab);
     }
@@ -1709,31 +2690,57 @@
       showToast.timer = setTimeout(() => toastEl.classList.remove("show"), 1900);
     }
 
+    function setSheetMode(mode) {
+      const sheet = $(".sheet");
+      if (sheet) {
+        sheet.classList.toggle("mode-event", mode === "event");
+        sheet.classList.toggle("mode-day", mode === "day");
+      }
+      const eventForm = $("#eventForm");
+      const dayForm = $("#dayForm");
+      if (eventForm) {
+        eventForm.hidden = mode !== "event";
+        eventForm.style.display = mode === "event" ? "grid" : "none";
+      }
+      if (dayForm) {
+        dayForm.hidden = mode !== "day";
+        dayForm.style.display = mode === "day" ? "grid" : "none";
+      }
+    }
+
     function openEventEditor(dayIndex, eventIndex = null) {
+      if (!trip.length) return openDayEditor(null);
       editorState = { mode: "event", dayIndex, eventIndex };
       const isNew = eventIndex === null;
       const event = isNew ? { time: "", title: "", tag: "", desc: "", hotel: "", memo: "" } : trip[dayIndex].events[eventIndex];
-      $("#sheetTitle").textContent = isNew ? "新增行程" : "修改行程";
-      $("#eventForm").hidden = false;
-      $("#dayForm").hidden = true;
-      $("#fTime").value = event.time || "";
+      const timeFields = extractTimeFields(event.time || "");
+      $("#sheetTitle").textContent = isNew ? "新增行程" : "修改行程 / 搬移日子";
+      setupTimeSelects();
+      setSheetMode("event");
+      setTimeSelectValue("#fStartTime", timeFields.start);
+      setTimeSelectValue("#fEndTime", timeFields.end);
+      $("#fStartTime").dataset.suffix = timeFields.suffix;
       $("#fTag").value = event.tag || "";
+      renderDayOptions(dayIndex);
       $("#fTitle").value = event.title || "";
       $("#fDesc").value = event.desc || "";
       $("#fHotel").value = event.hotel || "";
       $("#fMemo").value = event.memo || "";
+      $("#fStarred").checked = !!event.starred;
+      $("#fCodeText").value = event.codeText || "";
+      $("#fCodeType").value = event.codeType || "";
       openSheet();
-      setTimeout(() => $("#fTime").focus(), 80);
+      setTimeout(() => $("#fStartTime").focus(), 80);
     }
 
-    function openDayEditor(dayIndex) {
-      editorState = { mode: "day", dayIndex, eventIndex: null };
-      const day = trip[dayIndex];
-      $("#sheetTitle").textContent = "修改日子資料";
-      $("#eventForm").hidden = true;
-      $("#dayForm").hidden = false;
+    function openDayEditor(dayIndex = null) {
+      const isNew = dayIndex === null || dayIndex === undefined;
+      editorState = { mode: "day", dayIndex: isNew ? null : dayIndex, eventIndex: null };
+      const day = isNew ? { day: `Day ${trip.length + 1}`, date: "" } : trip[dayIndex];
+      $("#sheetTitle").textContent = isNew ? "新增日子" : "修改日子";
+      setSheetMode("day");
       $("#dDay").value = day.day || "";
-      $("#dDate").value = day.date || "";
+      $("#dDate").value = extractISOFromDayDate(day.date || "");
       openSheet();
       setTimeout(() => $("#dDay").focus(), 80);
     }
@@ -1749,49 +2756,105 @@
 
     function saveEventFromForm(event) {
       event.preventDefault();
+      if (!trip.length) { closeSheet(); return openDayEditor(null); }
+      const sourceDay = editorState.dayIndex;
+      const targetDay = Math.max(0, Math.min(Number($("#fDayTarget").value || sourceDay), trip.length - 1));
+      const existing = editorState.eventIndex === null ? null : trip[sourceDay].events[editorState.eventIndex];
       const payload = {
-        id: editorState.eventIndex === null ? `custom-${Date.now()}` : trip[editorState.dayIndex].events[editorState.eventIndex].id,
-        time: $("#fTime").value.trim(),
+        id: existing ? existing.id : `custom-${Date.now()}`,
+        time: composeTimeRange($("#fStartTime").value, $("#fEndTime").value, $("#fStartTime").dataset.suffix || ""),
         title: $("#fTitle").value.trim(),
         tag: $("#fTag").value.trim(),
         desc: $("#fDesc").value.trim(),
         hotel: $("#fHotel").value.trim(),
         memo: $("#fMemo").value.trim(),
-        done: false
+        starred: $("#fStarred").checked,
+        codeText: $("#fCodeText").value.trim(),
+        codeType: $("#fCodeText").value.trim() ? $("#fCodeType").value : "",
+        done: existing ? !!existing.done : false
       };
-      const keepDay = editorState.dayIndex;
-      const keepTop = getPageScrollTop(keepDay);
-      if (editorState.eventIndex === null) trip[keepDay].events.push(payload);
-      else trip[keepDay].events[editorState.eventIndex] = payload;
+      const keepTop = getPageScrollTop(targetDay);
+      if (editorState.eventIndex === null) {
+        trip[targetDay].events.push(payload);
+      } else if (targetDay === sourceDay) {
+        trip[sourceDay].events[editorState.eventIndex] = payload;
+      } else {
+        trip[sourceDay].events.splice(editorState.eventIndex, 1);
+        trip[targetDay].events.push(payload);
+      }
+      sortEventsByTime(trip[targetDay].events);
+      if (sourceDay !== targetDay && trip[sourceDay]) sortEventsByTime(trip[sourceDay].events);
       closeSheet();
       refreshMomentFocus();
-      renderKeepingScroll(keepDay, keepTop);
+      renderKeepingScroll(targetDay, keepTop);
+      goToDay(targetDay, false);
       persist(false);
-      showToast("行程已更新並儲存");
+      showToast(sourceDay !== targetDay ? "行程已搬移到指定日子" : "行程已更新並儲存");
     }
 
     function saveDayFromForm(event) {
       event.preventDefault();
-      const day = trip[editorState.dayIndex];
-      day.day = $("#dDay").value.trim() || day.day;
-      day.date = $("#dDate").value.trim() || day.date;
-      const keepTop = getPageScrollTop(editorState.dayIndex);
+      const nextDay = {
+        id: editorState.dayIndex === null ? `day-custom-${Date.now()}` : trip[editorState.dayIndex].id,
+        day: $("#dDay").value.trim() || `Day ${trip.length + 1}`,
+        date: formatDateLabel($("#dDate").value) || "未設定日期",
+        events: editorState.dayIndex === null ? [] : (trip[editorState.dayIndex].events || [])
+      };
+      let targetIndex = editorState.dayIndex;
+      if (editorState.dayIndex === null) {
+        trip.push(nextDay);
+        targetIndex = trip.length - 1;
+      } else {
+        trip[targetIndex] = nextDay;
+      }
       closeSheet();
       refreshMomentFocus();
-      renderKeepingScroll(editorState.dayIndex, keepTop);
+      render();
+      goToDay(targetIndex, false);
       persist(false);
-      showToast("日子資料已更新");
+      showToast(editorState.dayIndex === null ? "新日子已建立" : "日子資料已更新");
     }
 
-    function handleAction(action, dayIndex, eventIndex) {
+    function handleAction(action, dayIndex, eventIndex, filterValue = "") {
+      if (action === "edit-title") return editAppTitle();
+      if (action === "new-day-empty") return openDayEditor(null);
+      if (action === "filter") {
+        activeFilter = ["all", "food", "move"].includes(filterValue) ? filterValue : "all";
+        const targetDay = Number.isFinite(dayIndex) ? dayIndex : activeDay;
+        activeDay = targetDay;
+        renderKeepingScroll(targetDay, getPageScrollTop(targetDay));
+        return showToast(activeFilter === "all" ? "已顯示全部行程" : `已篩選：${filterLabel(activeFilter)}`);
+      }
+      if (!trip[dayIndex]) return openDayEditor(null);
       const events = trip[dayIndex].events;
       const keepTop = getPageScrollTop(dayIndex);
       if (action === "add") return openEventEditor(dayIndex, null);
       if (action === "edit-day") return openDayEditor(dayIndex);
+      if (action === "delete-day") {
+        const dayName = trip[dayIndex].day || `Day ${dayIndex + 1}`;
+        const ok = confirm(`確定刪除「${dayName}」？這天內的所有行程也會被刪除。`);
+        if (!ok) return;
+        trip.splice(dayIndex, 1);
+        activeDay = trip.length ? Math.max(0, Math.min(activeDay, trip.length - 1)) : 0;
+        refreshMomentFocus();
+        render();
+        goToDay(activeDay, false);
+        persist(false);
+        return showToast("日子已刪除");
+      }
+      if (action === "star") {
+        events[eventIndex].starred = !events[eventIndex].starred;
+        refreshMomentFocus();
+        renderKeepingScroll(dayIndex, keepTop);
+        persist(false);
+        return showToast(events[eventIndex].starred ? "已標記為期待 / 關注" : "已取消期待 / 關注標記");
+      }
       if (action === "edit") return openEventEditor(dayIndex, eventIndex);
+      if (action === "move") return openEventEditor(dayIndex, eventIndex);
       if (action === "duplicate") {
         const copy = deepClone(events[eventIndex]);
         copy.id = `copy-${Date.now()}`;
+        delete copy.shareId;
         copy.title = copy.title ? copy.title + "（複製）" : "新行程";
         events.splice(eventIndex + 1, 0, copy);
       }
@@ -1812,6 +2875,8 @@
         const next = Math.round(pager.scrollLeft / window.innerWidth);
         if (next !== activeDay) {
           activeDay = Math.max(0, Math.min(next, trip.length - 1));
+          activeFilter = "all";
+          render();
           syncActiveUI();
         }
       });
@@ -1827,7 +2892,7 @@
       if (actionBtn) {
         const dayIndex = Number(actionBtn.dataset.day);
         const eventIndex = actionBtn.dataset.event === undefined ? null : Number(actionBtn.dataset.event);
-        return handleAction(actionBtn.dataset.action, dayIndex, eventIndex);
+        return handleAction(actionBtn.dataset.action, dayIndex, eventIndex, actionBtn.dataset.filter || "");
       }
 
       const card = event.target.closest(".event-card");
@@ -1836,19 +2901,182 @@
       }
     });
 
-    $("#editToggle").addEventListener("click", () => {
-      editMode = !editMode;
-      document.body.classList.toggle("editing", editMode);
-      $("#editToggle").textContent = editMode ? "完成" : "修改";
-      showToast(editMode ? "可修改、新增、複製及刪除行程" : "已離開編輯模式");
-    });
-    $("#saveBtn").addEventListener("click", () => persist(true));
+    const editToggleBtn = $("#editToggle");
+    if (editToggleBtn) {
+      editToggleBtn.addEventListener("click", () => {
+        editMode = !editMode;
+        document.body.classList.toggle("editing", editMode);
+        editToggleBtn.textContent = editMode ? "完成" : "修改";
+        showToast(editMode ? "可新增日子、修改行程及搬移到其他日子" : "已離開編輯模式");
+      });
+    }
+    const saveBtn = $("#saveBtn");
+    if (saveBtn) saveBtn.addEventListener("click", () => persist(true));
     $("#themeBtn").addEventListener("click", () => {
       const nextTheme = document.body.dataset.theme === "light" ? "dark" : "light";
       applyTheme(nextTheme);
       showToast(nextTheme === "light" ? "已切換到日光模式" : "已切換到暗黑模式");
     });
     $("#nowBtn").addEventListener("click", () => jumpToNow(true));
+
+
+
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyBNEDhyugcVUm5CgmjAYKsF9qOpFa6M0Zs",
+      authDomain: "premium-trip-planner.firebaseapp.com",
+      projectId: "premium-trip-planner",
+      storageBucket: "premium-trip-planner.firebasestorage.app",
+      messagingSenderId: "155817399571",
+      appId: "1:155817399571:web:4f075a32e86b18c35d36e6",
+      measurementId: "G-P96N929N7W"
+    };
+
+    let firebaseApiPromise = null;
+    async function getFirebaseApi() {
+      if (firebaseApiPromise) return firebaseApiPromise;
+      firebaseApiPromise = (async () => {
+        const appMod = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js");
+        const firestoreMod = await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");
+        const firebaseApp = appMod.initializeApp(FIREBASE_CONFIG);
+        const db = firestoreMod.getFirestore(firebaseApp);
+        return {
+          db,
+          doc: firestoreMod.doc,
+          getDoc: firestoreMod.getDoc,
+          setDoc: firestoreMod.setDoc,
+          serverTimestamp: firestoreMod.serverTimestamp
+        };
+      })();
+      return firebaseApiPromise;
+    }
+
+    async function sha256Text(text) {
+      const data = new TextEncoder().encode(String(text || ""));
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    async function ensureFirebaseShareSettings() {
+      let current = loadShareSettings();
+      if (current.enabled && current.tripShareId && current.password) return current;
+
+      const password = prompt("首次上載 Firebase 前，請設定分享密碼：只可用英文字母及數字，最少 8 位", current.password || "");
+      if (password === null) return null;
+      if (!isValidSharePassword(password)) {
+        alert("密碼格式不正確：必須為 8 位或以上英數字，只可包含 A-Z、a-z、0-9。");
+        return null;
+      }
+
+      const share = {
+        enabled: true,
+        tripShareId: current.tripShareId || uniqueShareId(collectShareIds()),
+        password,
+        enabledAt: current.enabledAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      storageSet(SHARE_KEY, JSON.stringify(share));
+      updateShareButton();
+      return share;
+    }
+
+    function firebaseTripPayload(share, passwordHash) {
+      return {
+        appName: DEFAULT_APP_TITLE,
+        tripName: loadAppTitle(),
+        share: {
+          enabled: true,
+          tripShareId: share.tripShareId,
+          passwordHash
+        },
+        trip: normalizeTripData(deepClone(trip)),
+        updatedAt: null
+      };
+    }
+
+    async function saveTripToFirebase() {
+      closeSettingsMenu();
+      try {
+        const share = await ensureFirebaseShareSettings();
+        if (!share) return;
+        const api = await getFirebaseApi();
+        const passwordHash = await sha256Text(share.password);
+        const payload = firebaseTripPayload(share, passwordHash);
+        payload.updatedAt = api.serverTimestamp();
+        await api.setDoc(api.doc(api.db, "trips", share.tripShareId), payload, { merge: true });
+        removeEventShareIds();
+        persist(false);
+        render();
+        alert(`已上載整個旅程到 Firebase。\n\n分享 ID：${share.tripShareId}\n密碼：你剛才設定的密碼\n\n朋友之後可以用此 ID + 密碼載入整個旅程。`);
+      } catch (error) {
+        console.error(error);
+        alert("Firebase 上載失敗：" + (error && error.message ? error.message : error));
+      }
+    }
+
+    async function loadTripFromFirebase() {
+      closeSettingsMenu();
+      const tripShareId = prompt("輸入旅程分享 ID", loadShareSettings().tripShareId || "");
+      if (tripShareId === null) return;
+      const cleanId = String(tripShareId || "").trim();
+      if (!/^[A-Za-z0-9]{10}$/.test(cleanId)) return alert("分享 ID 應為 10 位英數字。");
+      const password = prompt("輸入分享密碼", "");
+      if (password === null) return;
+      if (!isValidSharePassword(password)) return alert("密碼格式不正確：必須為 8 位或以上英數字。");
+
+      try {
+        const api = await getFirebaseApi();
+        const snap = await api.getDoc(api.doc(api.db, "trips", cleanId));
+        if (!snap.exists()) return alert("找不到此旅程 ID。請確認 ID 是否正確，或先由原裝置上載到 Firebase。");
+        const data = snap.data();
+        const passwordHash = await sha256Text(password);
+        const savedHash = data && data.share && data.share.passwordHash;
+        if (savedHash && savedHash !== passwordHash) return alert("密碼不正確。");
+        if (!data || !Array.isArray(data.trip)) return alert("Firebase 內的旅程資料格式不正確。");
+
+        trip = normalizeTripData(data.trip);
+        applyAppTitle(data.tripName || DEFAULT_TRIP_NAME, { persist: true });
+        storageSet(SHARE_KEY, JSON.stringify({
+          enabled: true,
+          tripShareId: cleanId,
+          password,
+          enabledAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }));
+        activeDay = 0;
+        activeFilter = "all";
+        removeEventShareIds();
+        refreshMomentFocus();
+        persist(false);
+        render();
+        if (trip.length) jumpToNow(false); else goToDay(0, false);
+        alert("已從 Firebase 載入整個旅程。");
+      } catch (error) {
+        console.error(error);
+        alert("Firebase 載入失敗：" + (error && error.message ? error.message : error));
+      }
+    }
+
+    const settingsBtn = $("#settingsBtn");
+    const settingsMenu = $("#settingsMenu");
+    function closeSettingsMenu() { if (settingsMenu) settingsMenu.hidden = true; }
+    if (settingsBtn && settingsMenu) {
+      settingsBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        settingsMenu.hidden = !settingsMenu.hidden;
+      });
+      settingsMenu.addEventListener("click", (event) => event.stopPropagation());
+      document.addEventListener("click", closeSettingsMenu);
+    }
+
+    setupTimeSelects();
+    setSheetMode("event");
+    closeSheet();
+
+    $("#newDayBtn").addEventListener("click", () => { closeSettingsMenu(); openDayEditor(null); });
+    $("#editTitleBtn").addEventListener("click", editAppTitle);
+    $("#shareSetupBtn").addEventListener("click", openShareSetup);
+    $("#firebaseSaveBtn").addEventListener("click", saveTripToFirebase);
+    $("#firebaseLoadBtn").addEventListener("click", loadTripFromFirebase);
     $("#fab").addEventListener("click", () => openEventEditor(activeDay, null));
     $("#closeSheet").addEventListener("click", closeSheet);
     $("#cancelEvent").addEventListener("click", closeSheet);
@@ -1856,23 +3084,39 @@
     $("#eventForm").addEventListener("submit", saveEventFromForm);
     $("#dayForm").addEventListener("submit", saveDayFromForm);
     sheetBackdrop.addEventListener("click", (event) => { if (event.target === sheetBackdrop) closeSheet(); });
+    window.addEventListener("load", () => renderCodes(pager));
 
-    $("#resetBtn").addEventListener("click", () => {
-      if (!confirm("確定還原到原始行程？目前儲存的修改會被覆蓋。")) return;
-      trip = deepClone(STARTER_DATA);
+
+
+    $("#initBtn").addEventListener("click", () => {
+      closeSettingsMenu();
+      const ok = confirm("確定初始化？所有已建立日子、行程、備忘、兌換碼及本機紀錄都會刪除。此操作不能復原。");
+      if (!ok) return;
+      trip = [];
+      activeDay = 0;
+      activeFilter = "all";
+      storageRemove(STORAGE_KEY);
+      storageRemove(APP_TITLE_KEY);
+      storageRemove(SHARE_KEY);
+      removeEventShareIds();
+      applyAppTitle(DEFAULT_TRIP_NAME);
       refreshMomentFocus();
-      persist(false);
       render();
-      jumpToNow(false);
-      showToast("已還原原版行程");
+      goToDay(0, false);
+      persist(false);
+      showToast("已初始化並刪除所有紀錄");
     });
 
     $("#exportBtn").addEventListener("click", () => {
-      const blob = new Blob([JSON.stringify(trip, null, 2)], { type: "application/json;charset=utf-8" });
+      closeSettingsMenu();
+      const share = loadShareSettings();
+      const backup = { appTitle: DEFAULT_APP_TITLE, tripName: loadAppTitle(), trip, ...(share.enabled ? { share } : {}) };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "Nagoya_Trip_Backup.json";
+      const safeTitle = loadAppTitle().replace(/[^A-Za-z0-9一-鿿_-]+/g, "_").replace(/^_+|_+$/g, "") || "Premium_Trip";
+      a.download = `${safeTitle}_Backup.json`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -1880,19 +3124,31 @@
       showToast("已匯出 JSON 備份");
     });
 
-    $("#importBtn").addEventListener("click", () => $("#importFile").click());
+    $("#importBtn").addEventListener("click", () => { closeSettingsMenu(); $("#importFile").click(); });
     $("#importFile").addEventListener("change", async (event) => {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
       try {
         const text = await file.text();
         const parsed = JSON.parse(text);
-        if (!Array.isArray(parsed) || !parsed.length) throw new Error("格式不正確");
-        trip = parsed;
+        const importedTrip = Array.isArray(parsed) ? parsed : parsed && Array.isArray(parsed.trip) ? parsed.trip : null;
+        if (!importedTrip) throw new Error("格式不正確");
+        trip = normalizeTripData(importedTrip);
+        if (parsed && parsed.tripName) applyAppTitle(parsed.tripName, { persist: true });
+        else if (parsed && parsed.appTitle && parsed.appTitle !== DEFAULT_APP_TITLE && parsed.appTitle !== "中部北陸・Premium Trip") applyAppTitle(parsed.appTitle, { persist: true });
+        if (parsed && parsed.share && parsed.share.enabled) {
+          storageSet(SHARE_KEY, JSON.stringify(parsed.share));
+          ensureEventShareIds();
+        } else {
+          storageRemove(SHARE_KEY);
+          removeEventShareIds();
+        }
+        activeDay = 0;
+        activeFilter = "all";
         refreshMomentFocus();
         persist(false);
         render();
-        jumpToNow(false);
+        if (trip.length) jumpToNow(false); else goToDay(0, false);
         showToast("已匯入備份並儲存");
       } catch (error) {
         alert("匯入失敗：" + error.message);
@@ -1913,7 +3169,10 @@
 
     window.addEventListener("beforeunload", () => persist(false));
 
+    applyAppTitle();
+    removeEventShareIds();
     applyTheme(preferredTheme());
+    updateShareButton();
     refreshMomentFocus();
     render();
     jumpToNow(false);
