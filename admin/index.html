@@ -212,6 +212,7 @@
       -webkit-backdrop-filter: blur(18px);
     }
     .ios-modal-backdrop[hidden] { display: none; }
+    .ios-modal-backdrop, .ios-modal, .ios-modal * { pointer-events: auto; }
     .ios-modal {
       width: min(92vw, 390px);
       overflow: hidden;
@@ -244,6 +245,9 @@
     .ios-modal-actions.multi { grid-template-columns: 1fr 1fr; }
     .ios-modal-btn {
       min-height: 50px;
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
       color: #80bdff;
       background: transparent;
       border-radius: 0;
@@ -274,7 +278,7 @@
     .btn.primary { color: #fff; background: linear-gradient(135deg, #ff375f, #7c5cff); border-color: transparent; }
     @media (max-width: 520px) { .admin-actions { grid-template-columns: 1fr; } }
   </style>
-<script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004a24720b88a74f1926c63598%26fn%3DPremium_Trip_admin_page_syntax_fixed.html%26cd%3Dattachment%26ts%3D495008%26p%3Dfs%26cid%3D1%26sig%3D3fec9c180d3c2645a0f8bbd588755373b7187d4ce5e3b716613f0bee0318cab6%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+<script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000f428720bb2667a5a60ad08a0%26fn%3DPremium_Trip_admin_page_ios_safari_fixed.html%26cd%3Dattachment%26ts%3D495008%26p%3Dfs%26cid%3D1%26sig%3D9ba30e9ea15306306e56e394148adcbbc921792e9544b8b6e77a199afc47178d%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
   <main class="page">
     <header class="topbar">
@@ -410,18 +414,27 @@
         const inputEl = $("#modalInput", modalBackdrop);
         const actionButtons = [...modalBackdrop.querySelectorAll("[data-modal-index]")];
         actionButtons.forEach(button => {
-          button.addEventListener("click", event => {
+          const activate = event => {
             event.preventDefault();
             event.stopPropagation();
+            if (button.dataset.done === "1") return;
+            button.dataset.done = "1";
             const index = Number(button.dataset.modalIndex);
             const btn = buttons[index] || {};
             const value = inputEl ? inputEl.value : undefined;
             finish(input ? { action: btn.value, value } : btn.value);
-          }, { once: true });
+          };
+          // iOS Safari may blur an input and swallow the normal click. Bind touch/pointer too.
+          button.addEventListener("pointerup", activate, { once: true });
+          button.addEventListener("touchend", activate, { once: true, passive: false });
+          button.addEventListener("click", activate, { once: true });
         });
 
         if (inputEl) {
-          setTimeout(() => inputEl.focus(), 80);
+          // Avoid forcing focus on iOS Safari; it can make the first button tap only close the keyboard.
+          if (!/iP(ad|hone|od)/.test(navigator.userAgent)) {
+            setTimeout(() => inputEl.focus(), 80);
+          }
           inputEl.addEventListener("keydown", event => {
             if (event.key === "Enter") {
               event.preventDefault();
@@ -477,6 +490,13 @@
       return /^[A-Za-z0-9]{8,}$/.test(password || "");
     }
 
+    function withTimeout(promise, label = "Firebase 操作", ms = 18000) {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error(`${label}逾時，請檢查 iOS Safari 網絡、Firestore Rules 或重新整理頁面。`)), ms))
+      ]);
+    }
+
     function loadSession() {
       try { return JSON.parse(localStorage.getItem(ADMIN_SESSION_KEY) || "{}"); }
       catch { return {}; }
@@ -496,7 +516,7 @@
 
     async function ensureAdminLogin() {
       const adminRef = doc(db, "admin", "settings");
-      const snap = await getDoc(adminRef);
+      const snap = await withTimeout(getDoc(adminRef), "讀取 Admin 設定");
       const session = loadSession();
       if (snap.exists()) {
         const savedHash = snap.data().passwordHash || "";
@@ -526,7 +546,7 @@
         return false;
       }
       const passwordHash = await sha256(password);
-      await setDoc(adminRef, { passwordHash, createdAt: serverTimestamp(), updatedAt: serverTimestamp() }, { merge: true });
+      await withTimeout(setDoc(adminRef, { passwordHash, createdAt: serverTimestamp(), updatedAt: serverTimestamp() }, { merge: true }), "建立 Admin 密碼");
       adminLoggedIn = true;
       adminHash = passwordHash;
       saveSession({ loggedIn: true, passwordHash });
@@ -564,7 +584,7 @@
     }
 
     async function fetchTrips() {
-      const snap = await getDocs(collection(db, "trips"));
+      const snap = await withTimeout(getDocs(collection(db, "trips")), "讀取旅程清單");
       return snap.docs.map(item => {
         const data = item.data() || {};
         const days = Array.isArray(data.days) ? data.days : [];
@@ -594,14 +614,17 @@
       if (code === "unavailable" || message.includes("offline")) {
         return "Firebase 連線失敗，瀏覽器目前連不到 Firestore。請確認網絡、Firestore 是否已建立、Firebase config 是否正確，以及不要進入 Realtime Database。\n\n原始錯誤：" + message;
       }
+      if (message.includes("逾時")) {
+        return message + "\n\n建議：在 iOS Safari 按重新整理後再試；如仍失敗，請確認已用 HTTPS、Firestore Rules 已 Publish，並暫時關閉內容阻擋器。";
+      }
       return message;
     }
 
     async function renderTrips() {
-      document.body.classList.add("loading");
       try {
         const ok = await ensureAdminLogin();
         if (!ok) return;
+        document.body.classList.add("loading");
         const rows = await fetchTrips();
         renderStatus({ count: rows.length, updated: new Date().toLocaleString("zh-HK", { hour12: false }) });
         if (!rows.length) {
@@ -662,7 +685,7 @@
           return;
         }
         document.body.classList.add("loading");
-        await deleteDoc(doc(db, "trips", id));
+        await withTimeout(deleteDoc(doc(db, "trips", id)), "刪除 Firebase 旅程");
         showToast("已刪除 Firebase 旅程");
         await renderTrips();
       } catch (error) {
