@@ -1565,7 +1565,7 @@
     }
 
 </style>
-  <script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782021570902&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000051b87208bbfc06606ff1fe07%26fn%3DPremium_Trip_multi_trip_delete_event.html%26cd%3Dattachment%26ts%3D495006%26p%3Dfs%26cid%3D1%26sig%3D4c605c6d526bdfdd17acbbff81b17037939c33d051ad770d6117e0ede5c7585b%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782021570902&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782023374504&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004f00720b8c81f7cbeac4bf92%26fn%3DPremium_Trip_removable_starter.html%26cd%3Dattachment%26ts%3D495006%26p%3Dfs%26cid%3D1%26sig%3D0baefbfa5eb28189fdc0a3f35cf8ac763e75e0134e5dea60f47f06da46e25292%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782023374504&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
@@ -1682,7 +1682,7 @@
           <textarea id="fHotel" name="hotel" placeholder="訂房資訊、集合地點、特殊提醒……"></textarea>
         </label>
         <label>私人備忘
-          <textarea id="fMemo" name="memo" placeholder="例如：記得帶護照、先買票、預約號碼……"></textarea>
+          <textarea id="fMemo" name="memo" placeholder="帶護照、先買票、預約號碼……"></textarea>
         </label>
         <label class="star-form-row">
           <input id="fStarred" name="starred" type="checkbox" />
@@ -1690,7 +1690,7 @@
         </label>
         <div class="code-grid">
           <label>兌換碼 / 優惠碼/ 票券編號
-            <input id="fCodeText" name="codeText" placeholder="例如：NAGOYA2026 / 預約編號 / 兌換URL" />
+            <input id="fCodeText" name="codeText" placeholder="可選填" />
           </label>
           <label>顯示形式
             <select id="fCodeType" name="codeType">
@@ -1727,687 +1727,7 @@
   </div>
 
   <script>
-    const STARTER_DATA = [
-  {
-    "id": "day-1",
-    "day": "Day 1",
-    "date": "6月23日 (週二) - Day 1",
-    "events": [
-      {
-        "id": "d1-1",
-        "time": "12:30 — 14:50",
-        "title": "香港國際機場",
-        "desc": "辦理登機",
-        "tag": "手續",
-        "hotel": "今晚入住：三交旅館-名古屋新幹線口\n(三交イン名古屋新幹線口)\n[共2間房: 雙人房x1 + 單人房x1 | 共4人]",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d1-2",
-        "time": "14:50-19:50",
-        "title": "中部國際機場",
-        "desc": "香港國際機場->中部國際機場",
-        "tag": "離境及抵達",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d1-3",
-        "time": "20:47 — 21:15 28 分鐘",
-        "title": "名鐵名古屋站",
-        "desc": "中部國際機場站->名鐵名古屋站\n[車費: 1,340円 (含μ-ticket)]",
-        "tag": "乘名鐵",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d1-4",
-        "time": "21:30",
-        "title": "三交旅館-名古屋新幹線口",
-        "desc": "世界之山將雞翅宵夜\n目標:辦理飯店入住並外帶名物雞翅回房當特色晚餐",
-        "tag": "晚餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d1-5",
-        "time": "22:00後",
-        "title": "三交旅館-名古屋新幹線口",
-        "desc": "飯店就寢休息\n目標:回房洗漱休息，儲備翌日購物狂歡之精神與體力",
-        "tag": "休息",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      }
-    ]
-  },
-  {
-    "id": "day-2",
-    "day": "Day 2",
-    "date": "6月24日 (週三) - Day 2",
-    "events": [
-      {
-        "id": "d2-1",
-        "time": "09:30 — 10:30 1 小時",
-        "title": "Tsubame Bread and Milk",
-        "desc": "Tsubame Bread and Milk",
-        "tag": "早餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d2-2",
-        "time": "11:00 — 13:00 2 小時",
-        "title": "JR 高島屋 & Midland Square",
-        "desc": "高島屋 & Midland Square\n目標:掃貨Louis Vuitton、Dior等一線Luxury頂級獨立精品旗艦店",
-        "tag": "購物",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d2-3",
-        "time": "13:00 — 14:30 1 小時 30 分鐘",
-        "title": "",
-        "desc": "",
-        "tag": "午餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d2-4",
-        "time": "14:30 — 16:00 1 小時 30 分鐘",
-        "title": "JR 高島屋百貨",
-        "desc": "高島屋百貨部門\n目標:專櫃化妝品、潮流服飾與伴手禮大掃貨",
-        "tag": "購物",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d2-5",
-        "time": "16:00 — 16:05 5 分鐘",
-        "title": "榮站",
-        "desc": "名古屋站->榮站 [車費: 210円]",
-        "tag": "乘地鐵",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d2-6",
-        "time": "16:05 — 19:00 2 小時 55 分鐘",
-        "title": "榮商圈 (PARCO & 松坂屋)",
-        "desc": "榮商圈戰區\n目標:美妝連鎖藥妝補貨，並朝聖PARCO全新搬遷之寶可夢中心(Pokemon Center)買限定商品",
-        "tag": "購物",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d2-7",
-        "time": "19:00 — 20:30 1 小時 30 分鐘",
-        "title": "蓬萊軒鰻魚飯 (松坂屋店)",
-        "desc": "蓬萊軒鰻魚飯三吃\n目標:品嚐名古屋最正宗代表性老字號鰻魚飯 (17:30逛街途中記得先去登記取號碼牌)",
-        "tag": "晚餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d2-8",
-        "time": "20:30後",
-        "title": "三交旅館-名古屋新幹線口",
-        "desc": "返回飯店就寢休息\n目標:放鬆休息，儲備翌日自駕長途旅行之精神體力",
-        "tag": "休息",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      }
-    ]
-  },
-  {
-    "id": "day-3",
-    "day": "Day 3",
-    "date": "6月25日 (週四) - Day 3",
-    "events": [
-      {
-        "id": "d3-1",
-        "time": "08:00 — 09:00 1 小時",
-        "title": "Cafe Gentiane (名古屋站)",
-        "desc": "Cafe Gentiane 專賣店\n目標:品嚐名古屋超人氣小雞蛋糕『Piyorin』特製萌系療癒早餐",
-        "tag": "早餐",
-        "hotel": "今晚入住：飛驒高山酒店 Ascend Hotel Collection\n(Hotel Around Takayama)\n[共2間房: 雙床房x1 + 大床房x1 | 共3人]",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d3-2",
-        "time": "09:00 — 09:30 30 分鐘",
-        "title": "Zy Rent A Car 名古屋駅",
-        "desc": "Zy Rent A Car 辦理取車\n目標:出示身分證件、國際駕照與租車憑證，核對車況開啟自駕 🚗",
-        "tag": "手續",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d3-3",
-        "time": "09:30 — 10:15 45 分鐘",
-        "title": "岐阜",
-        "desc": "名古屋->岐阜\n[公里: 約40km, 隧道費: 約1,200円]",
-        "tag": "駕駛",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d3-4",
-        "time": "10:15 — 12:00 1 小時 45 分鐘",
-        "title": "岐阜城",
-        "desc": "金華山纜車與岐阜城\n目標:搭纜車登頂天守閣，360度俯瞰織田信長當年天下布武絕景與拍照",
-        "tag": "觀光",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d3-5",
-        "time": "12:00 — 13:00 1 小時",
-        "title": "岐阜城山下餐廳",
-        "desc": "山下在地料理\n目標:享用岐阜特產手工飛驒蕎麥麵或鹽烤香魚定食午餐",
-        "tag": "午餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d3-6",
-        "time": "13:00 — 15:00 2 小時",
-        "title": "高山",
-        "desc": "岐阜->高山\n[公里: 約110km, 隧道費: 約3,100円 (行駛東海北陸自動車道)]",
-        "tag": "駕駛",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d3-7",
-        "time": "15:00 — 15:30 30 分鐘",
-        "title": "飛驒高山酒店",
-        "desc": "飯店辦理入住\n目標:辦理Check-in、放下大件行李與短暫整頓回血",
-        "tag": "休息",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d3-8",
-        "time": "15:30 — 17:30 2 小時",
-        "title": "高山古街",
-        "desc": "高山老街散策\n目標:漫步古色古香江戶風情街道，拍出極致溫柔感照片 (小店多於17:00準時打烊)",
-        "tag": "步行/觀光",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d3-9",
-        "time": "18:00 — 19:30 1 小時 30 分鐘",
-        "title": "味蔵天國 或 丸明",
-        "desc": "頂級飛驒牛燒肉\n目標:大快朵頤全日本頂尖、油花分布完美的頂級飛驒牛燒肉晚餐大餐",
-        "tag": "晚餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d3-10",
-        "time": "19:30後",
-        "title": "飛驒高山酒店",
-        "desc": "返回酒店就寢休息\n目標:回溫泉飯店洗漱泡湯，徹底放盛休息，儲備翌日行程體力",
-        "tag": "休息",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      }
-    ]
-  },
-  {
-    "id": "day-4",
-    "day": "Day 4",
-    "date": "6月26日 (週五) - Day 4",
-    "events": [
-      {
-        "id": "d4-1",
-        "time": "08:30 — 10:00 1 小時 30 分鐘",
-        "title": "宮川朝市",
-        "desc": "宮川朝市晨間漫步\n目標:品嚐人氣火烤飛驒牛握壽司、手燒仙貝與在地濃郁新鮮牛奶當特色早餐",
-        "tag": "早餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d4-2",
-        "time": "10:00 — 11:15 1 小時 15 分鐘",
-        "title": "新穗高",
-        "desc": "高山->新穗高\n[公里: 約50km, 隧道費: 0円 (沿途欣賞壯麗飛驒山脈風光)]",
-        "tag": "駕駛",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d4-3",
-        "time": "11:15 — 12:30 1 小時 15 分鐘",
-        "title": "新穗高展望台",
-        "desc": "新穗高雙層纜車\n目標:搭乘日本唯一雙層纜車衝上標高2,156公尺展望台，飽覽北阿爾卑斯山連峰大絕景",
-        "tag": "觀光",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d4-4",
-        "time": "12:30 — 13:15 45 分鐘",
-        "title": "新穗高西穗高口站餐廳",
-        "desc": "西穗高高空餐廳\n目標:在高山雪景瞭望台旁享用熱騰騰的高山拉麵或飛驒牛咖哩飯午餐",
-        "tag": "午餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d4-5",
-        "time": "13:15 — 14:30 1 小時 15 分鐘",
-        "title": "高山",
-        "desc": "新穗高->高山\n[公里: 約50km, 隧道費: 0円]",
-        "tag": "駕駛",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d4-6",
-        "time": "14:30 — 17:00 2 小時 30 分鐘",
-        "title": "飛驒高山酒店",
-        "desc": "午睡\n目標:好好睡個飽，強效補充自駕遊精神與體力",
-        "tag": "休息",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d4-7",
-        "time": "17:00 — 18:00 1 小時",
-        "title": "高山老街船坂酒造店",
-        "desc": "船坂酒造店老店體驗\n目標:午睡清醒後散步，體驗趣味100円自助投幣藏元清酒試飲，微醺放鬆",
-        "tag": "觀光",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d4-8",
-        "time": "18:30 — 20:00 1 小時 30 分鐘",
-        "title": "高山市區鄉土料理",
-        "desc": "在地鄉土料理\n目標:找尋在地小店享用飛驒傳統『朴葉味噌燒』牛排風味晚餐",
-        "tag": "晚餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d4-9",
-        "time": "20:00後",
-        "title": "飛驒高山酒店",
-        "desc": "返回酒店就寢休息\n目標:回房洗漱泡湯，徹底放鬆休息，儲備翌日前往合掌村與金澤之體力",
-        "tag": "休息",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      }
-    ]
-  },
-  {
-    "id": "day-5",
-    "day": "Day 5",
-    "date": "6月27日 (週六) - Day 5",
-    "events": [
-      {
-        "id": "d5-1",
-        "time": "08:30 — 09:30 1 小時",
-        "title": "飛驒高山酒店內",
-        "desc": "飯店精緻早餐\n目標:享用酒店大廚採用在地飛驒新鮮農產與野菜烹調的優雅朝食",
-        "tag": "早餐",
-        "hotel": "今晚入住：阿曼尼克金澤酒店\n(Hotel Amanek Kanazawa)\n[共2間房: 高級雙床房x1 + 高級雙人房x1 | 共2人]",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d5-2",
-        "time": "10:00",
-        "title": "飛驒高山酒店",
-        "desc": "飯店退房辦理\n目標:完成辦理Check-out並準備出發自駕",
-        "tag": "手續",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d5-3",
-        "time": "10:00 — 10:50 50 分鐘",
-        "title": "白川鄉",
-        "desc": "高山->白川鄉\n[公里: 約50km, 隧道費: 約1,300円]",
-        "tag": "駕駛",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d5-4",
-        "time": "10:50 — 12:30 1 小時 40 分鐘",
-        "title": "白川鄉天守閣展望台",
-        "desc": "世界遺產合掌村\n目標:漫步薑餅屋村落，並登上天守閣展望台拍下明信片等級的合掌村全景網美照",
-        "tag": "步行/觀光",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d5-5",
-        "time": "12:30 — 13:30 1 小時",
-        "title": "白川鄉圍爐裏老屋餐廳",
-        "desc": "喫茶落人(或合掌定食)\n目標:在歷史古董圍爐裏旁喝熱紅豆湯，享用懷舊日式咖哩定食午餐",
-        "tag": "午餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d5-6",
-        "time": "13:30 — 14:45 1 小時 15 分鐘",
-        "title": "金澤",
-        "desc": "白川鄉->金澤\n[公里: 約75km, 隧道費: 約2,200円]",
-        "tag": "駕駛",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d5-7",
-        "time": "14:45 — 17:00 2 小時 15 分鐘",
-        "title": "兼六園 & 金澤城",
-        "desc": "日本三大名園兼六園\n目標:深度遊覽古典江戶大名庭園、徽軫石燈籠，散步至金澤城外圍拍氣勢古風照",
-        "tag": "步行/觀光",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d5-8",
-        "time": "17:00 — 18:00 1 小時",
-        "title": "阿曼尼克金澤酒店",
-        "desc": "飯店辦理入住\n目標:完成辦理Check-in、放下大件行李與自駕車輛、短暫小歇回血",
-        "tag": "休息/手續",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d5-9",
-        "time": "18:30 — 20:00 1 小時 30 分鐘",
-        "title": "近江町市場餐廳",
-        "desc": "近江町海鮮饗宴\n目標:在金澤人的廚房大快朵頤滿出來的極奢痛風海鮮丼與北陸高檔海鮮晚餐",
-        "tag": "晚餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d5-10",
-        "time": "20:00後",
-        "title": "阿曼尼克金澤酒店",
-        "desc": "返回酒店就寢休息\n目標:回片町商圈飯店休息，為翌日金澤老街晨拍與返程作好充足睡眠準備",
-        "tag": "休息",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      }
-    ]
-  },
-  {
-    "id": "day-6",
-    "day": "Day 6",
-    "date": "6月28日 (週日) - Day 6",
-    "events": [
-      {
-        "id": "d6-1",
-        "time": "08:30 — 09:30 1 小時",
-        "title": "近江町市場「いきいき亭」",
-        "desc": "いきいき亭特選朝食\n目標:起個大早排隊，享用全金澤最新鮮奢華的特選海鮮丼冠軍早餐",
-        "tag": "早餐",
-        "hotel": "今晚入住：三交旅館-名古屋新幹線口\n(三交イン名古屋新幹線口)\n[標準雙人房x2 | 無餐點]",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d6-2",
-        "time": "09:30 — 11:00 1 小時 30 分鐘",
-        "title": "東茶屋街",
-        "desc": "東茶屋街金箔散策\n目標:清晨無遊客時段拍攝極致木造老街網美照，並朝聖『箔一』品嚐奢華奢麗的金箔霜淇淋",
-        "tag": "步行/觀光",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d6-3",
-        "time": "11:00",
-        "title": "阿曼尼克金澤酒店",
-        "desc": "飯店辦理退房\n目標:辦理Check-out手續、提領行李與車輛準備返程",
-        "tag": "手續",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d6-4",
-        "time": "11:00 — 12:30 1 小時 30 分鐘",
-        "title": "金澤車站百番街壽司店",
-        "desc": "北陸限定迴轉壽司\n目標:離境前朝聖金澤車站出名的優質壽司，必點海中紅寶石『黑喉魚』與富山白蝦午餐",
-        "tag": "午餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d6-5",
-        "time": "12:30 — 16:30 4 小時",
-        "title": "蛭野高原",
-        "desc": "金澤->名古屋 [公里: 約250km, 隧道費: 約5,800円]\n中途停靠日本最高『蛭野高原 SA』吃牧場直送鮮乳霜淇淋，預防週日收假塞車提前出發",
-        "tag": "駕駛",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d6-6",
-        "time": "16:30 — 17:00 30 分鐘",
-        "title": "Zy Rent A Car 名古屋駅",
-        "desc": "門市還車手續\n目標:車輛加滿油、結清ETC路費、核對車況並歸還車輛 (17:00前還車免收營業外服務費)",
-        "tag": "手續",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d6-7",
-        "time": "17:15",
-        "title": "三交旅館-名古屋新幹線口",
-        "desc": "新飯店辦理入住\n目標:步行至新飯店放行李，洗臉稍作歇息",
-        "tag": "休息",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d6-8",
-        "time": "18:30 — 20:00 1 小時 30 分鐘",
-        "title": "矢場 Ton 味噌豬排 (名站店)",
-        "desc": "矢場Ton味噌豬排\n目標:朝聖名古屋名物靈魂鐵板味噌豬排，大口吃肉舉辦完賽自駕慶功宴晚餐",
-        "tag": "晚餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d6-9",
-        "time": "20:00後",
-        "title": "三交旅館-名古屋新幹線口",
-        "desc": "返回酒店就寢休息\n目標:回名站飯店打包大件行李與戰利品，放鬆休息，準備翌日犬山之旅",
-        "tag": "休息",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      }
-    ]
-  },
-  {
-    "id": "day-7",
-    "day": "Day 7",
-    "date": "6月29日 (週一) - Day 7",
-    "events": [
-      {
-        "id": "d7-1",
-        "time": "08:00 — 09:00 1 小時",
-        "title": "名古屋站地下街加藤珈琲店",
-        "desc": "加藤珈琲店老鋪朝食\n目標:名古屋老字號高評價自家烘焙珈琲店，享用濃郁黑咖啡與經典紅豆厚吐司早餐",
-        "tag": "早餐",
-        "hotel": "今晚入住：（當日返台無住宿）",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d7-2",
-        "time": "09:00",
-        "title": "三交旅館-名古屋新幹線口",
-        "desc": "飯店退房寄物\n目標:辦理Check-out，將大件登機行李免費寄存於飯店櫃檯",
-        "tag": "手續",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d7-3",
-        "time": "09:24 — 09:51 27 分鐘",
-        "title": "犬山站",
-        "desc": "名鐵名古屋站->犬山站\n[車費: 570円 (搭乘名鐵犬山線特急)]",
-        "tag": "乘名鐵",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d7-4",
-        "time": "10:00 — 13:00 3 小時",
-        "title": "犬山城下町",
-        "desc": "國寶犬山城 & 三光稻荷神社\n目標:登上現存最古老木造天守閣遠眺，並在神社拍攝著名的粉紅愛心繪馬牆網美照",
-        "tag": "步行/觀光",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d7-5",
-        "time": "13:00 — 14:00 1 小時",
-        "title": "犬山城下町老街老鋪",
-        "desc": "城下町老街串物午餐\n目標:體驗江戶老街邊走邊吃，必買超萌彩虹『戀小町丸子』與香噴噴飛驒牛串燒點心午餐",
-        "tag": "午餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d7-6",
-        "time": "14:35 — 15:05 30 分鐘",
-        "title": "名鐵名古屋站",
-        "desc": "犬山站->名鐵名古屋站\n[車費: 570円]",
-        "tag": "乘名鐵",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d7-7",
-        "time": "15:05 — 16:30 1 小時 25 分鐘",
-        "title": "三交旅館-名古屋新幹線口",
-        "desc": "取回行李\n目標:回飯店領取寄存大行李，利用大廳空間重新整理所有戰利品與手提行李",
-        "tag": "休息/手續",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d7-8",
-        "time": "17:01 — 17:29 28 分鐘",
-        "title": "中部國際機場站",
-        "desc": "名鐵名古屋站->中部國際機場站\n[車費: 1,340円 (搭乘名鐵機場特急 μ-SKY)]",
-        "tag": "乘名鐵機場特急",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d7-9",
-        "time": "17:30 — 18:30 1 小時",
-        "title": "中部國際機場",
-        "desc": "辦理出境",
-        "tag": "手續",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d7-10",
-        "time": "18:30 — 19:30 1 小時",
-        "title": "山本屋總本家 (機場店)",
-        "desc": "山本屋總本家味噌煮烏龍麵\n目標:離境前最後巡禮名古屋靈魂名物，濃郁手工砂鍋味噌煮烏龍麵，全身暖和晚餐",
-        "tag": "晚餐",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d7-11",
-        "time": "19:30 — 20:45 1 小時 15 分鐘",
-        "title": "中部國際機場免稅店",
-        "desc": "機場免稅店大掃貨\n目標:在登機門前免稅店進行日本各地精緻土產、名物蝦餅與赤福的最後大補貨",
-        "tag": "購物",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      },
-      {
-        "id": "d7-12",
-        "time": "20:45",
-        "title": "香港國際機場",
-        "desc": "中部國際機場->香港國際機場",
-        "tag": "離境及抵達",
-        "hotel": "",
-        "done": false,
-        "memo": ""
-      }
-    ]
-  }
-];
+    const STARTER_DATA = [];
     const STORAGE_KEY = "nagoya-premium-trip-v2";
     const THEME_KEY = "nagoya-premium-trip-theme";
     const APP_TITLE_KEY = "nagoya-premium-trip-title";
@@ -2474,7 +1794,7 @@
 
     function loadAppTitle() {
       const saved = storageGet(APP_TITLE_KEY);
-      if (!saved || saved === DEFAULT_APP_TITLE || saved === "中部北陸・Premium Trip") return DEFAULT_TRIP_NAME;
+      if (!saved || saved === DEFAULT_APP_TITLE || saved === "優旅程 - Premium Trip") return DEFAULT_TRIP_NAME;
       return String(saved).trim() || DEFAULT_TRIP_NAME;
     }
 
@@ -2567,12 +1887,11 @@
     function rememberCurrentSharedTrip(role = "owner") {
       const share = loadShareSettings();
       if (!share.enabled || !share.tripShareId || !share.password) return;
-      const existing = loadTripHistory().find(item => item.tripShareId === share.tripShareId);
       upsertTripHistory({
         tripShareId: share.tripShareId,
         password: share.password,
         tripName: loadAppTitle(),
-        role: existing && existing.role ? existing.role : role
+        role
       });
     }
 
@@ -2704,7 +2023,7 @@
         const choice = await showIosActionSheet(
           "分享個人行程",
           `專屬 ID：${current.tripShareId}
-已開啟 Firebase 即時同步。其他人用此 ID 和密碼加入後，可一齊查看及修改同一個旅程。`,
+已開啟即時同步。`,
           [
             { label: "查看 / 複製分享資料", value: "status", primary: true },
             { label: "更改密碼", value: "password" },
@@ -2713,10 +2032,10 @@
         );
         if (choice === "status") return openShareDetails();
         if (choice === "password") {
-          const nextPassword = await showIosPrompt("輸入新的分享密碼", "", {
-            message: "只可用英文字母及數字，最少 8 位。更改後會自動同步到 Firebase。",
+          const nextPassword = await showIosPrompt("輸入新的密碼", "", {
+            message: "只可用英文字母及數字，最少 8 位。更改後會自動同步。",
             inputType: "password",
-            placeholder: "例如 Trip2026A"
+            placeholder: "00000000"
           });
           if (nextPassword === null) return;
           if (!isValidSharePassword(nextPassword)) return showIosAlert("密碼格式不正確：必須為 8 位或以上英數字，只可包含 A-Z、a-z、0-9。", "密碼格式錯誤");
@@ -2727,7 +2046,7 @@
           return showToast("分享密碼已更新並同步");
         }
         if (choice === "close") {
-          const ok = await showIosConfirm("確定關閉分享？此裝置會停止 Firebase 同步並刪除本機專屬 ID，但 Firebase 上已分享的旅程資料不會自動刪除。", {
+          const ok = await showIosConfirm("確定關閉分享？此裝置會停止同步並刪除專屬 ID，但已分享的旅程資料不會自動刪除。", {
             title: "關閉分享",
             confirmText: "關閉分享",
             danger: true
@@ -2739,15 +2058,15 @@
           updateShareButton();
           render();
           persist(false);
-          return showToast("已關閉本機分享同步");
+          return showToast("已關閉同步");
         }
         return;
       }
 
       const password = await showIosPrompt("分享個人行程", "", {
-        message: "請設定分享密碼：只可用英文字母及數字，最少 8 位。開啟後，這個旅程會自動同步到 Firebase，不需要再按上載。",
+        message: "請設定密碼：只可用英文字母及數字，最少 8 位。",
         inputType: "password",
-        placeholder: "例如 Trip2026A"
+        placeholder: "00000000"
       });
       if (password === null) return;
       if (!isValidSharePassword(password)) return showIosAlert("密碼格式不正確：必須為 8 位或以上英數字，只可包含 A-Z、a-z、0-9。", "密碼格式錯誤");
@@ -2766,7 +2085,7 @@
       persist(false);
       await saveTripToFirebase({ silent: true, force: true });
       await startFirebaseLiveSync();
-      await showIosAlert(`已開啟分享個人行程，並開始 Firebase 即時同步。
+      await showIosAlert(`已開啟分享個人行程，並開始同步。
 
 專屬 ID：${share.tripShareId}
 密碼：${share.password}
@@ -3090,7 +2409,7 @@
       saveStatus.textContent = "已儲存：" + now.toLocaleTimeString("zh-HK", { hour: "2-digit", minute: "2-digit" });
       updateShareButton();
       if (share.enabled && share.tripShareId && share.password) {
-        rememberCurrentSharedTrip("owner");
+        upsertTripHistory({ tripShareId: share.tripShareId, password: share.password, tripName: loadAppTitle(), role: "owner" });
       }
       scheduleFirebaseSync();
       if (show) showToast(isShareEnabled() ? "已儲存並準備同步" : "已儲存到此裝置");
@@ -4047,7 +3366,7 @@
       });
       await openIosModal({
         title: "我的旅程紀錄",
-        message: "這裡只記錄你曾經建立或加入過的 Firebase 旅程，方便日後快速切換。",
+        message: "這裡只記錄你曾經建立或加入過的旅程，方便日後快速切換。",
         body,
         actions: [{ label: "關閉", value: null, cancel: true }]
       });
@@ -4056,19 +3375,19 @@
     async function loadTripFromFirebase() {
       closeSettingsMenu();
       const tripShareId = await showIosPrompt("加入他人行程", loadShareSettings().tripShareId || "", {
-        message: "請輸入對方提供的 10 位專屬 ID。加入後會自動同步，大家可一齊查看及修改同一個旅程。",
-        placeholder: "10 位英數字專屬 ID"
+        message: "請輸入 10 位英數字的專屬 ID，加入後會自動同步。",
+        placeholder: "10 位英數字的專屬 ID"
       });
       if (tripShareId === null) return;
       const cleanId = String(tripShareId || "").trim();
       if (!/^[A-Za-z0-9]{10}$/.test(cleanId)) return showIosAlert("專屬 ID 應為 10 位英數字。", "專屬 ID 格式錯誤");
-      const password = await showIosPrompt("輸入分享密碼", "", { inputType: "password" });
+      const password = await showIosPrompt("密碼", "", { inputType: "password" });
       if (password === null) return;
       if (!isValidSharePassword(password)) return showIosAlert("密碼格式不正確：必須為 8 位或以上英數字。", "密碼格式錯誤");
 
       try {
         await applyFirebaseTripByCredentials(cleanId, password, { role: "joined" });
-        await showIosAlert("已加入他人行程，並開始 Firebase 即時同步。之後你或其他人的修改會自動更新。", "加入完成");
+        await showIosAlert("已加入他人行程，並開始同步。", "加入完成");
       } catch (error) {
         console.error(error);
         await showIosAlert("加入他人行程失敗：" + (error && error.message ? error.message : error), "加入失敗");
@@ -4137,7 +3456,7 @@
       render();
       goToDay(0, false);
       persist(false);
-      showToast("已初始化並刪除所有紀錄");
+      showToast("已初始化");
     });
 
     $("#exportBtn").addEventListener("click", () => {
@@ -4168,7 +3487,7 @@
         if (!importedTrip) throw new Error("格式不正確");
         trip = normalizeTripData(importedTrip);
         if (parsed && parsed.tripName) applyAppTitle(parsed.tripName, { persist: true });
-        else if (parsed && parsed.appTitle && parsed.appTitle !== DEFAULT_APP_TITLE && parsed.appTitle !== "中部北陸・Premium Trip") applyAppTitle(parsed.appTitle, { persist: true });
+        else if (parsed && parsed.appTitle && parsed.appTitle !== DEFAULT_APP_TITLE && parsed.appTitle !== "Premium Trip") applyAppTitle(parsed.appTitle, { persist: true });
         if (parsed && parsed.share && parsed.share.enabled) {
           storageSet(SHARE_KEY, JSON.stringify(parsed.share));
           ensureEventShareIds();
