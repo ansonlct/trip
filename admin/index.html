@@ -267,8 +267,14 @@
       .trip-id { justify-self: start; }
       .actions { grid-template-columns: 1fr; }
     }
+  
+    .admin-actions { grid-template-columns: 1fr 1fr 1fr; }
+    .password-text { color: #d7ffe3; font-weight: 950; word-break: break-all; }
+    .muted-small { color: rgba(255,255,255,.50); font-size: 12px; }
+    .btn.primary { color: #fff; background: linear-gradient(135deg, #ff375f, #7c5cff); border-color: transparent; }
+    @media (max-width: 520px) { .admin-actions { grid-template-columns: 1fr; } }
   </style>
-<script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000007854720b9bf6e6ed6e26cad8%26fn%3DPremium_Trip_admin_page_button_fixed.html%26cd%3Dattachment%26ts%3D495008%26p%3Dfs%26cid%3D1%26sig%3De4549ee16ac2391bdf45d3f1658203eb7f84483e409eb55005e7e3491eda11e8%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+</head>
 <body>
   <main class="page">
     <header class="topbar">
@@ -559,7 +565,9 @@
           dayCount: days.length,
           eventCount: countEvents(days),
           updatedAt: data.updatedAt || data.createdAt || null,
-          createdAt: data.createdAt || null
+          createdAt: data.createdAt || null,
+          password: data.share && data.share.password ? String(data.share.password) : "",
+          passwordHash: data.share && data.share.passwordHash ? String(data.share.passwordHash) : ""
         };
       }).sort((a, b) => {
         const aTime = a.updatedAt && a.updatedAt.toMillis ? a.updatedAt.toMillis() : 0;
@@ -596,12 +604,14 @@
             <div class="trip-top">
               <div>
                 <div class="trip-title">${escapeHTML(row.tripName)}</div>
-                <div class="meta">日子：${row.dayCount}　行程：${row.eventCount}<br>最近更新：${escapeHTML(firestoreTimeToText(row.updatedAt))}<br>建立時間：${escapeHTML(firestoreTimeToText(row.createdAt))}</div>
+                <div class="meta">日子：${row.dayCount}　行程：${row.eventCount}<br>最近更新：${escapeHTML(firestoreTimeToText(row.updatedAt))}<br>建立時間：${escapeHTML(firestoreTimeToText(row.createdAt))}<br>密碼：${row.password ? `<b class="password-text">${escapeHTML(row.password)}</b>` : `<span class="muted-small">未儲存明文密碼（舊旅程只存 hash，不能還原）</span>`}</div>
               </div>
               <button class="trip-id" type="button" data-copy="${escapeHTML(row.id)}">${escapeHTML(row.id)}</button>
             </div>
-            <div class="actions">
-              <button class="btn" type="button" data-copy="${escapeHTML(row.id)}">複製 ID</button>
+            <div class="actions admin-actions">
+              <button class="btn primary" type="button" data-open="${escapeHTML(row.id)}" data-password="${escapeHTML(row.password)}">進入行程</button>
+              <button class="btn" type="button" data-copy="${escapeHTML(row.password ? `ID：${row.id}
+密碼：${row.password}` : row.id)}">複製 ID/密碼</button>
               <button class="btn danger" type="button" data-delete="${escapeHTML(row.id)}" data-name="${escapeHTML(row.tripName)}">刪除 Firebase 旅程</button>
             </div>
           </article>
@@ -620,6 +630,19 @@
       } catch {
         await showAlert(text, "請手動複製");
       }
+    }
+
+    async function openTripFromAdmin(id, password) {
+      if (!password) {
+        await showAlert("這個旅程未儲存明文密碼，Admin 不能直接進入。
+
+原因：舊版只在 Firebase 儲存 passwordHash，hash 不能還原成原密碼。請用新版主 App 重新分享或更改密碼一次，之後 Admin 就可查看密碼及直接進入。", "沒有可用密碼");
+        return;
+      }
+      const url = new URL("../", window.location.href);
+      url.searchParams.set("tripId", id);
+      url.searchParams.set("password", password);
+      window.location.href = url.toString();
     }
 
     async function deleteTrip(id, name) {
@@ -643,8 +666,10 @@
       showToast("已登出 Admin");
     });
     tripList.addEventListener("click", event => {
+      const openBtn = event.target.closest("[data-open]");
       const copyBtn = event.target.closest("[data-copy]");
       const deleteBtn = event.target.closest("[data-delete]");
+      if (openBtn) openTripFromAdmin(openBtn.getAttribute("data-open"), openBtn.getAttribute("data-password") || "");
       if (copyBtn) copyText(copyBtn.getAttribute("data-copy"));
       if (deleteBtn) deleteTrip(deleteBtn.getAttribute("data-delete"), deleteBtn.getAttribute("data-name") || "未命名旅程");
     });

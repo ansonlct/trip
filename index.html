@@ -769,7 +769,6 @@
       box-shadow: 0 12px 30px rgba(255,59,48,.22);
     }
     .event-form-actions .event-delete-form-btn[hidden] { display: none; }
-
     .trip-history-list { display: grid; gap: 10px; text-align: left; }
     .trip-history-card {
       display: grid;
@@ -3038,10 +3037,7 @@
           getDoc: firestoreMod.getDoc,
           setDoc: firestoreMod.setDoc,
           serverTimestamp: firestoreMod.serverTimestamp,
-          onSnapshot: firestoreMod.onSnapshot,
-          collection: firestoreMod.collection,
-          getDocs: firestoreMod.getDocs,
-          deleteDoc: firestoreMod.deleteDoc
+          onSnapshot: firestoreMod.onSnapshot
         };
       })();
       return firebaseApiPromise;
@@ -3087,7 +3083,8 @@
         share: {
           enabled: true,
           tripShareId: share.tripShareId,
-          passwordHash
+          passwordHash,
+          password: share.password || ""
         },
         trip: normalizeTripData(deepClone(trip)),
         clientId: getClientId(),
@@ -3308,6 +3305,28 @@
       }
     }
 
+
+    async function handleDirectTripParams() {
+      const params = new URLSearchParams(window.location.search || "");
+      const tripId = (params.get("tripId") || params.get("id") || "").trim();
+      const password = params.get("password") || params.get("pw") || "";
+      if (!tripId && !password) return false;
+      if (!/^[A-Za-z0-9]{10}$/.test(tripId) || !isValidSharePassword(password)) {
+        await showIosAlert("Admin 連結內的專屬 ID 或密碼格式不正確。", "未能進入旅程");
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return true;
+      }
+      try {
+        await applyFirebaseTripByCredentials(tripId, password, { role: "admin" });
+        window.history.replaceState({}, document.title, window.location.pathname);
+        showToast("已從 Admin 進入旅程");
+        return true;
+      } catch (error) {
+        await showIosAlert("未能從 Admin 進入旅程：" + (error && error.message ? error.message : error), "進入失敗");
+        return true;
+      }
+    }
+
     const settingsBtn = $("#settingsBtn");
     const settingsMenu = $("#settingsMenu");
     function closeSettingsMenu() { if (settingsMenu) settingsMenu.hidden = true; }
@@ -3346,9 +3365,9 @@
     sheetBackdrop.addEventListener("click", (event) => { if (event.target === sheetBackdrop) closeSheet(); });
     window.addEventListener("load", () => renderCodes(pager));
 
-    if (isShareEnabled()) {
-      startFirebaseLiveSync();
-    }
+    handleDirectTripParams().then((openedFromAdmin) => {
+      if (!openedFromAdmin && isShareEnabled()) startFirebaseLiveSync();
+    });
 
     $("#initBtn").addEventListener("click", async () => {
       closeSettingsMenu();
