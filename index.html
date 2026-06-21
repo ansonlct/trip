@@ -202,8 +202,6 @@
       gap: 10px;
       padding: 0 4px;
     }
-    body.editing
-
     .pager {
       position: relative;
       z-index: 1;
@@ -482,7 +480,6 @@
       line-height: 1.45;
     }
     .memo:not(:empty) { display: block; }
-    body.editing
     .mini-btn {
       color: rgba(255,255,255,.88);
       background: rgba(255,255,255,.11);
@@ -1518,7 +1515,7 @@
       .stats { flex-wrap: wrap !important; }
     }
 </style>
-<script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782037463646&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000005ea4720b8043868584b5fccd%26ts%3D495010%26p%3Dfs%26cid%3D1%26sig%3D55c71ce1a0637733ce1dfe56b8c18396ca6e4336d81bb8ed66033a6da013088b%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782037463646&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script defer="" src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
@@ -1688,6 +1685,7 @@
     let activeDay = 0;
     let activeFilter = "all";
     let scrollRaf = null;
+    let scrollSettleTimer = null;
     let momentFocus = null;
     let editorState = { mode: "event", dayIndex: 0, eventIndex: null };
     let firebaseUnsubscribe = null;
@@ -2602,6 +2600,10 @@
       }
     }
 
+    function pagerPageWidth() {
+      return pager.clientWidth || window.innerWidth || document.documentElement.clientWidth || 1;
+    }
+
     function goToDay(index, smooth = true, scrollTab = true) {
       if (!trip.length) {
         activeDay = 0;
@@ -2612,7 +2614,7 @@
       const nextDay = Math.max(0, Math.min(index, trip.length - 1));
       if (nextDay !== activeDay) activeFilter = "all";
       activeDay = nextDay;
-      pager.scrollTo({ left: activeDay * window.innerWidth, behavior: smooth ? "smooth" : "auto" });
+      pager.scrollTo({ left: activeDay * pagerPageWidth(), behavior: smooth ? "smooth" : "auto" });
       syncActiveUI(scrollTab);
     }
 
@@ -2951,14 +2953,24 @@
     pager.addEventListener("scroll", () => {
       if (scrollRaf) cancelAnimationFrame(scrollRaf);
       scrollRaf = requestAnimationFrame(() => {
-        const next = Math.round(pager.scrollLeft / window.innerWidth);
+        if (!trip.length) return;
+        const next = Math.max(0, Math.min(Math.round(pager.scrollLeft / pagerPageWidth()), trip.length - 1));
         if (next !== activeDay) {
-          activeDay = Math.max(0, Math.min(next, trip.length - 1));
+          activeDay = next;
           activeFilter = "all";
-          render();
           syncActiveUI();
         }
       });
+      clearTimeout(scrollSettleTimer);
+      scrollSettleTimer = setTimeout(() => {
+        if (!trip.length) return;
+        const settledDay = Math.max(0, Math.min(Math.round(pager.scrollLeft / pagerPageWidth()), trip.length - 1));
+        if (settledDay !== activeDay) {
+          activeDay = settledDay;
+          activeFilter = "all";
+        }
+        syncActiveUI();
+      }, 120);
     }, { passive: true });
 
     window.addEventListener("resize", () => goToDay(activeDay, false));
