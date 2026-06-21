@@ -1529,7 +1529,7 @@
     }
 
 </style>
-  <script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782017973399&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000db6872098d2eb58620bc68d3%26fn%3DPremium_Trip_narrow_screen_fixed.html%26cd%3Dattachment%26ts%3D495005%26p%3Dfs%26cid%3D1%26sig%3Dae46549b950fb920d9aa3a7def8b8c8d86414c7db41edc7a6e5428a2c80e3794%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=0&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782017973399&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782019772014&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000ff347208b58b3894cab325f9%26fn%3DPremium_Trip_auto_sync_share.html%26cd%3Dattachment%26ts%3D495005%26p%3Dfs%26cid%3D1%26sig%3D2bacaf1e8efbbcad82e63840662ee4df286a6166f33ebb1f43cb41664dbea505%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=0&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782019772014&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
@@ -1556,9 +1556,8 @@
     <div class="settings-menu" id="settingsMenu" hidden aria-label="設定選單">
       <button class="settings-item primary" id="editTitleBtn" type="button">✏️ 修改旅程名稱</button>
       <button class="settings-item" id="newDayBtn" type="button">＋ 新增日子</button>
-      <button class="settings-item" id="shareSetupBtn" type="button">🔐 分享 / Firebase 準備</button>
-      <button class="settings-item primary" id="firebaseSaveBtn" type="button">☁️ 上載到 Firebase</button>
-      <button class="settings-item" id="firebaseLoadBtn" type="button">📥 從 Firebase 載入</button>
+      <button class="settings-item" id="shareSetupBtn" type="button">🔐 分享個人行程</button>
+      <button class="settings-item" id="firebaseLoadBtn" type="button">📥 加入他人行程</button>
       <button class="settings-item" id="exportBtn" type="button">匯出備份</button>
       <button class="settings-item" id="importBtn" type="button">匯入備份</button>
       <button class="settings-item danger" id="initBtn" type="button">初始化</button>
@@ -2375,6 +2374,7 @@
     const THEME_KEY = "nagoya-premium-trip-theme";
     const APP_TITLE_KEY = "nagoya-premium-trip-title";
     const SHARE_KEY = "premium-trip-share-settings";
+    const CLIENT_KEY = "premium-trip-client-id";
     const DEFAULT_APP_TITLE = "優旅程 - Premium Trip";
     const DEFAULT_TRIP_NAME = "未命名旅程";
     const TRIP_YEAR = 2026;
@@ -2389,6 +2389,11 @@
     let scrollRaf = null;
     let momentFocus = null;
     let editorState = { mode: "event", dayIndex: 0, eventIndex: null };
+    let firebaseUnsubscribe = null;
+    let firebaseListeningTripId = "";
+    let firebaseSyncTimer = null;
+    let firebaseRemoteApplying = false;
+    let firebaseLastSavedKey = "";
 
     const pager = $("#pager");
     const dayRail = $("#dayRail");
@@ -2525,11 +2530,11 @@
       if (!btn) return;
       const settings = loadShareSettings();
       if (settings.enabled) {
-        btn.textContent = "🔐 分享準備已開啟";
+        btn.textContent = "🔐 個人行程分享中";
         btn.classList.add("share-on");
-        btn.title = settings.tripShareId ? `旅程分享 ID：${settings.tripShareId}` : "分享準備已開啟";
+        btn.title = settings.tripShareId ? `旅程分享 ID：${settings.tripShareId}` : "個人行程分享中";
       } else {
-        btn.textContent = "🔐 分享 / Firebase 準備";
+        btn.textContent = "🔐 分享個人行程";
         btn.classList.remove("share-on");
         btn.removeAttribute("title");
       }
@@ -2602,24 +2607,19 @@
       const current = loadShareSettings();
       if (current.enabled) {
         const choice = await showIosActionSheet(
-          "分享 / Firebase 準備",
-          `旅程分享 ID：${current.tripShareId}
-此 ID 代表整個旅程。`,
+          "分享個人行程",
+          `專屬 ID：${current.tripShareId}
+已開啟 Firebase 即時同步。其他人用此 ID 和密碼加入後，可一齊查看及修改同一個旅程。`,
           [
-            { label: "查看狀態", value: "status", primary: true },
+            { label: "查看 / 複製分享資料", value: "status", primary: true },
             { label: "更改密碼", value: "password" },
-            { label: "關閉分享並刪除 ID", value: "close", danger: true }
+            { label: "關閉分享", value: "close", danger: true }
           ]
         );
-        if (choice === "status") {
-          await showIosAlert(`旅程名稱：${loadAppTitle()}
-旅程分享 ID：${current.tripShareId}
-此 ID 代表整個旅程。Firebase 尚未連接；目前是本機分享資料準備模式。`, "分享狀態");
-          return;
-        }
+        if (choice === "status") return openShareDetails();
         if (choice === "password") {
           const nextPassword = await showIosPrompt("輸入新的分享密碼", "", {
-            message: "只可用英文字母及數字，最少 8 位。",
+            message: "只可用英文字母及數字，最少 8 位。更改後會自動同步到 Firebase。",
             inputType: "password",
             placeholder: "例如 Trip2026A"
           });
@@ -2628,27 +2628,29 @@
           storageSet(SHARE_KEY, JSON.stringify({ ...current, password: nextPassword, updatedAt: new Date().toISOString() }));
           updateShareButton();
           persist(false);
-          return showToast("分享密碼已更新");
+          await saveTripToFirebase({ silent: true, force: true });
+          return showToast("分享密碼已更新並同步");
         }
         if (choice === "close") {
-          const ok = await showIosConfirm("確定關閉分享準備？旅程分享 ID 會從本機資料中刪除，回到純 localStorage 模式。", {
+          const ok = await showIosConfirm("確定關閉分享？此裝置會停止 Firebase 同步並刪除本機專屬 ID，但 Firebase 上已分享的旅程資料不會自動刪除。", {
             title: "關閉分享",
             confirmText: "關閉分享",
             danger: true
           });
           if (!ok) return;
+          stopFirebaseLiveSync();
           removeEventShareIds();
           storageRemove(SHARE_KEY);
           updateShareButton();
           render();
           persist(false);
-          return showToast("已關閉分享準備並刪除旅程分享 ID");
+          return showToast("已關閉本機分享同步");
         }
         return;
       }
 
-      const password = await showIosPrompt("開啟分享 / Firebase 準備", "", {
-        message: "請設定分享密碼：只可用英文字母及數字，最少 8 位。",
+      const password = await showIosPrompt("分享個人行程", "", {
+        message: "請設定分享密碼：只可用英文字母及數字，最少 8 位。開啟後，這個旅程會自動同步到 Firebase，不需要再按上載。",
         inputType: "password",
         placeholder: "例如 Trip2026A"
       });
@@ -2659,16 +2661,22 @@
         enabled: true,
         tripShareId: uniqueShareId(ids),
         password,
-        enabledAt: new Date().toISOString()
+        enabledAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
       storageSet(SHARE_KEY, JSON.stringify(share));
       removeEventShareIds();
       updateShareButton();
       render();
       persist(false);
-      await showIosAlert(`已開啟分享 / Firebase 準備
-旅程分享 ID：${share.tripShareId}
-此 ID 代表整個旅程。`, "分享已開啟");
+      await saveTripToFirebase({ silent: true, force: true });
+      await startFirebaseLiveSync();
+      await showIosAlert(`已開啟分享個人行程，並開始 Firebase 即時同步。
+
+專屬 ID：${share.tripShareId}
+密碼：${share.password}
+
+其他人可用「加入他人行程」輸入 ID 和密碼，一齊查看及修改。`, "分享已開啟");
     }
 
     function preferredTheme() {
@@ -2986,7 +2994,8 @@
       const now = new Date();
       saveStatus.textContent = "已儲存：" + now.toLocaleTimeString("zh-HK", { hour: "2-digit", minute: "2-digit" });
       updateShareButton();
-      if (show) showToast("已儲存到此裝置");
+      scheduleFirebaseSync();
+      if (show) showToast(isShareEnabled() ? "已儲存並準備同步" : "已儲存到此裝置");
     }
     function escapeHTML(value = "") {
       return String(value)
@@ -3628,6 +3637,37 @@
     };
 
     let firebaseApiPromise = null;
+    function getClientId() {
+      let id = storageGet(CLIENT_KEY);
+      if (!id) {
+        id = "client-" + randomAlphaNum(16);
+        storageSet(CLIENT_KEY, id);
+      }
+      return id;
+    }
+
+    function firebaseStateKey() {
+      return JSON.stringify({ tripName: loadAppTitle(), trip: normalizeTripData(deepClone(trip)) });
+    }
+
+    function scheduleFirebaseSync() {
+      if (firebaseRemoteApplying) return;
+      const share = loadShareSettings();
+      if (!share.enabled || !share.tripShareId || !share.password) return;
+      clearTimeout(firebaseSyncTimer);
+      firebaseSyncTimer = setTimeout(() => saveTripToFirebase({ silent: true }), 900);
+    }
+
+    function stopFirebaseLiveSync() {
+      clearTimeout(firebaseSyncTimer);
+      firebaseSyncTimer = null;
+      firebaseListeningTripId = "";
+      if (typeof firebaseUnsubscribe === "function") {
+        try { firebaseUnsubscribe(); } catch (error) { console.warn("Firebase unsubscribe failed", error); }
+      }
+      firebaseUnsubscribe = null;
+    }
+
     async function getFirebaseApi() {
       if (firebaseApiPromise) return firebaseApiPromise;
       firebaseApiPromise = (async () => {
@@ -3640,7 +3680,8 @@
           doc: firestoreMod.doc,
           getDoc: firestoreMod.getDoc,
           setDoc: firestoreMod.setDoc,
-          serverTimestamp: firestoreMod.serverTimestamp
+          serverTimestamp: firestoreMod.serverTimestamp,
+          onSnapshot: firestoreMod.onSnapshot
         };
       })();
       return firebaseApiPromise;
@@ -3656,8 +3697,8 @@
       let current = loadShareSettings();
       if (current.enabled && current.tripShareId && current.password) return current;
 
-      const password = await showIosPrompt("首次上載 Firebase", current.password || "", {
-        message: "請設定分享密碼：只可用英文字母及數字，最少 8 位。",
+      const password = await showIosPrompt("分享個人行程", current.password || "", {
+        message: "請設定分享密碼：只可用英文字母及數字，最少 8 位。開啟後會自動同步到 Firebase。",
         inputType: "password",
         placeholder: "例如 Trip2026A"
       });
@@ -3689,43 +3730,99 @@
           passwordHash
         },
         trip: normalizeTripData(deepClone(trip)),
+        clientId: getClientId(),
+        clientUpdatedAt: new Date().toISOString(),
         updatedAt: null
       };
     }
 
-    async function saveTripToFirebase() {
-      closeSettingsMenu();
+    async function saveTripToFirebase(options = {}) {
+      const silent = !!options.silent;
+      const force = !!options.force;
+      if (!silent) closeSettingsMenu();
       try {
         const share = await ensureFirebaseShareSettings();
         if (!share) return;
+        const stateKey = firebaseStateKey() + "|" + share.tripShareId + "|" + share.password;
+        if (silent && !force && stateKey === firebaseLastSavedKey) return;
         const api = await getFirebaseApi();
         const passwordHash = await sha256Text(share.password);
         const payload = firebaseTripPayload(share, passwordHash);
         payload.updatedAt = api.serverTimestamp();
         await api.setDoc(api.doc(api.db, "trips", share.tripShareId), payload, { merge: true });
+        firebaseLastSavedKey = stateKey;
         removeEventShareIds();
-        persist(false);
-        render();
-        await showIosAlert(`已上載整個旅程到 Firebase。
+        if (!firebaseRemoteApplying) {
+          const now = new Date();
+          saveStatus.textContent = "已同步 Firebase：" + now.toLocaleTimeString("zh-HK", { hour: "2-digit", minute: "2-digit" });
+        }
+        await startFirebaseLiveSync();
+        if (!silent) {
+          await showIosAlert(`已開始同步到 Firebase。
 
 分享 ID：${share.tripShareId}
-密碼：你剛才設定的密碼
+密碼：${share.password}
 
-朋友之後可以用此 ID + 密碼載入整個旅程。`, "Firebase 上載完成");
+其他人可用「加入他人行程」輸入此 ID + 密碼。之後所有修改會自動同步，不需要再按上載。`, "Firebase 同步已開啟");
+        }
       } catch (error) {
         console.error(error);
-        await showIosAlert("Firebase 上載失敗：" + (error && error.message ? error.message : error), "上載失敗");
+        if (!silent) await showIosAlert("Firebase 同步失敗：" + (error && error.message ? error.message : error), "同步失敗");
+        else showToast("Firebase 同步失敗");
+      }
+    }
+
+    async function startFirebaseLiveSync() {
+      const share = loadShareSettings();
+      if (!share.enabled || !share.tripShareId || !share.password) return;
+      if (firebaseUnsubscribe && firebaseListeningTripId === share.tripShareId) return;
+      stopFirebaseLiveSync();
+      try {
+        const api = await getFirebaseApi();
+        firebaseListeningTripId = share.tripShareId;
+        firebaseUnsubscribe = api.onSnapshot(api.doc(api.db, "trips", share.tripShareId), async (snap) => {
+          if (!snap.exists()) return;
+          const data = snap.data();
+          if (!data || !Array.isArray(data.trip)) return;
+          if (data.clientId && data.clientId === getClientId()) return;
+          const localShare = loadShareSettings();
+          if (!localShare.enabled || localShare.tripShareId !== share.tripShareId) return;
+          if (data.share && data.share.passwordHash) {
+            const localHash = await sha256Text(localShare.password || "");
+            if (localHash !== data.share.passwordHash) return;
+          }
+          firebaseRemoteApplying = true;
+          try {
+            trip = normalizeTripData(data.trip);
+            applyAppTitle(data.tripName || DEFAULT_TRIP_NAME, { persist: true });
+            activeDay = trip.length ? Math.max(0, Math.min(activeDay, trip.length - 1)) : 0;
+            activeFilter = "all";
+            refreshMomentFocus();
+            persist(false);
+            render();
+            saveStatus.textContent = "已接收 Firebase 同步：" + new Date().toLocaleTimeString("zh-HK", { hour: "2-digit", minute: "2-digit" });
+          } finally {
+            firebaseRemoteApplying = false;
+          }
+        }, (error) => {
+          console.error(error);
+          showToast("Firebase 即時同步中斷");
+        });
+      } catch (error) {
+        console.error(error);
+        showToast("未能開啟 Firebase 即時同步");
       }
     }
 
     async function loadTripFromFirebase() {
       closeSettingsMenu();
-      const tripShareId = await showIosPrompt("輸入旅程分享 ID", loadShareSettings().tripShareId || "", {
-        placeholder: "10 位英數字分享 ID"
+      const tripShareId = await showIosPrompt("加入他人行程", loadShareSettings().tripShareId || "", {
+        message: "請輸入對方提供的 10 位專屬 ID。加入後會自動同步，大家可一齊查看及修改同一個旅程。",
+        placeholder: "10 位英數字專屬 ID"
       });
       if (tripShareId === null) return;
       const cleanId = String(tripShareId || "").trim();
-      if (!/^[A-Za-z0-9]{10}$/.test(cleanId)) return showIosAlert("分享 ID 應為 10 位英數字。", "分享 ID 格式錯誤");
+      if (!/^[A-Za-z0-9]{10}$/.test(cleanId)) return showIosAlert("專屬 ID 應為 10 位英數字。", "專屬 ID 格式錯誤");
       const password = await showIosPrompt("輸入分享密碼", "", { inputType: "password" });
       if (password === null) return;
       if (!isValidSharePassword(password)) return showIosAlert("密碼格式不正確：必須為 8 位或以上英數字。", "密碼格式錯誤");
@@ -3733,34 +3830,41 @@
       try {
         const api = await getFirebaseApi();
         const snap = await api.getDoc(api.doc(api.db, "trips", cleanId));
-        if (!snap.exists()) return showIosAlert("找不到此旅程 ID。請確認 ID 是否正確，或先由原裝置上載到 Firebase。", "找不到旅程");
+        if (!snap.exists()) return showIosAlert("找不到此旅程 ID。請確認 ID 是否正確，或請對方先開啟「分享個人行程」。", "找不到旅程");
         const data = snap.data();
         const passwordHash = await sha256Text(password);
         const savedHash = data && data.share && data.share.passwordHash;
-        if (savedHash && savedHash !== passwordHash) return showIosAlert("密碼不正確。", "載入失敗");
+        if (savedHash && savedHash !== passwordHash) return showIosAlert("密碼不正確。", "加入失敗");
         if (!data || !Array.isArray(data.trip)) return showIosAlert("Firebase 內的旅程資料格式不正確。", "資料格式錯誤");
 
-        trip = normalizeTripData(data.trip);
-        applyAppTitle(data.tripName || DEFAULT_TRIP_NAME, { persist: true });
-        storageSet(SHARE_KEY, JSON.stringify({
-          enabled: true,
-          tripShareId: cleanId,
-          password,
-          enabledAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }));
-        removeEventShareIds();
-        activeDay = 0;
-        activeFilter = "all";
-        refreshMomentFocus();
-        updateShareButton();
-        persist(false);
-        render();
-        if (trip.length) jumpToNow(false); else goToDay(0, false);
-        await showIosAlert("已從 Firebase 載入整個旅程。", "載入完成");
+        stopFirebaseLiveSync();
+        firebaseRemoteApplying = true;
+        try {
+          trip = normalizeTripData(data.trip);
+          applyAppTitle(data.tripName || DEFAULT_TRIP_NAME, { persist: true });
+          storageSet(SHARE_KEY, JSON.stringify({
+            enabled: true,
+            tripShareId: cleanId,
+            password,
+            enabledAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }));
+          removeEventShareIds();
+          activeDay = 0;
+          activeFilter = "all";
+          refreshMomentFocus();
+          updateShareButton();
+          persist(false);
+          render();
+          if (trip.length) jumpToNow(false); else goToDay(0, false);
+        } finally {
+          firebaseRemoteApplying = false;
+        }
+        await startFirebaseLiveSync();
+        await showIosAlert("已加入他人行程，並開始 Firebase 即時同步。之後你或其他人的修改會自動更新。", "加入完成");
       } catch (error) {
         console.error(error);
-        await showIosAlert("Firebase 載入失敗：" + (error && error.message ? error.message : error), "載入失敗");
+        await showIosAlert("加入他人行程失敗：" + (error && error.message ? error.message : error), "加入失敗");
       }
     }
 
@@ -3786,7 +3890,8 @@
     $("#newDayBtn").addEventListener("click", () => { closeSettingsMenu(); openDayEditor(null); });
     $("#editTitleBtn").addEventListener("click", editAppTitle);
     $("#shareSetupBtn").addEventListener("click", openShareSetup);
-    $("#firebaseSaveBtn").addEventListener("click", saveTripToFirebase);
+    const manualFirebaseSaveBtn = $("#firebaseSaveBtn");
+    if (manualFirebaseSaveBtn) manualFirebaseSaveBtn.addEventListener("click", () => saveTripToFirebase({ silent: false, force: true }));
     $("#firebaseLoadBtn").addEventListener("click", loadTripFromFirebase);
     $("#fab").addEventListener("click", () => openEventEditor(activeDay, null));
     $("#closeSheet").addEventListener("click", closeSheet);
@@ -3797,12 +3902,17 @@
     sheetBackdrop.addEventListener("click", (event) => { if (event.target === sheetBackdrop) closeSheet(); });
     window.addEventListener("load", () => renderCodes(pager));
 
+    if (isShareEnabled()) {
+      startFirebaseLiveSync();
+    }
+
 
 
     $("#initBtn").addEventListener("click", async () => {
       closeSettingsMenu();
       const ok = await showIosConfirm("確定初始化？所有已建立日子、行程、備忘、兌換碼及本機紀錄都會刪除。此操作不能復原。", { title: "初始化", confirmText: "初始化", danger: true });
       if (!ok) return;
+      stopFirebaseLiveSync();
       trip = [];
       activeDay = 0;
       activeFilter = "all";
