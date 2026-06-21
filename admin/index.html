@@ -274,7 +274,7 @@
     .btn.primary { color: #fff; background: linear-gradient(135deg, #ff375f, #7c5cff); border-color: transparent; }
     @media (max-width: 520px) { .admin-actions { grid-template-columns: 1fr; } }
   </style>
-<script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000009d34720ba97edd7e3eb51b21%26fn%3DPremium_Trip_admin_page_login_delete_fixed.html%26cd%3Dattachment%26ts%3D495008%26p%3Dfs%26cid%3D1%26sig%3D7d483ea1703e35ba6f332c32342cd0d388957f0b6af778afb9fd533e88d1ca38%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+<script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004a24720b88a74f1926c63598%26fn%3DPremium_Trip_admin_page_syntax_fixed.html%26cd%3Dattachment%26ts%3D495008%26p%3Dfs%26cid%3D1%26sig%3D3fec9c180d3c2645a0f8bbd588755373b7187d4ce5e3b716613f0bee0318cab6%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
   <main class="page">
     <header class="topbar">
@@ -643,9 +643,7 @@
 
     async function openTripFromAdmin(id, password) {
       if (!password) {
-        await showAlert("這個旅程未儲存明文密碼，Admin 不能直接進入。
-
-原因：舊版只在 Firebase 儲存 passwordHash，hash 不能還原成原密碼。請用新版主 App 重新分享或更改密碼一次，之後 Admin 就可查看密碼及直接進入。", "沒有可用密碼");
+        await showAlert("這個旅程未儲存明文密碼，Admin 不能直接進入。\n\n原因：舊版只在 Firebase 儲存 passwordHash，hash 不能還原成原密碼。請用新版主 App 重新分享或更改密碼一次，之後 Admin 就可查看密碼及直接進入。", "沒有可用密碼");
         return;
       }
       const url = new URL("../", window.location.href);
